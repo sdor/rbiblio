@@ -1,5 +1,8 @@
 {
     "cSpell.words": [
         "flate"
+    ],
+    "rust-analyzer.linkedProjects": [
+        "./Cargo.toml"
     ]
 }
