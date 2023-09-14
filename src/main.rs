@@ -1,11 +1,13 @@
 use flate2::read::GzDecoder;
+use futures::io::BufWriter;
 use quick_xml::de::Deserializer;
-use quick_xml::events::{BytesStart, Event};
+use quick_xml::events::{BytesEnd, BytesStart, BytesText, Event};
+use quick_xml::name::QName;
 use quick_xml::reader::Reader;
 use quick_xml::Writer;
 use serde::{Deserialize, Serialize};
 use std::fs::{read_dir, File};
-use std::io::{BufRead, BufReader};
+use std::io::{BufRead, BufReader, Cursor, Write};
 use std::num::ParseIntError;
 use std::path::Path;
 
@@ -17,39 +19,27 @@ struct PMID {
     #[serde(rename = "@Version")]
     version: String,
     #[serde(rename = "$value")]
-    value: Option<String>,
+    value: String,
 }
 
 impl PMID {
-    // fn id(&self) -> Result<u32, std::num::ParseIntError> {
-    //     str::parse::<u32>(&self.value)
-    // }
+    fn id(&self) -> Result<u32, std::num::ParseIntError> {
+        str::parse::<u32>(&self.value)
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct Title {
     #[serde(rename = "$value")]
-    value: Option<String>,
+    value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct Abbreviation {
     #[serde(rename = "$value")]
-    value: Option<String>,
+    value: String,
 }
-// <Journal>
-//     <ISSN IssnType="Print">0017-0011</ISSN>
-//     <JournalIssue CitedMedium="Print">
-//         <Volume>67</Volume>
-//         <Issue>1</Issue>
-//         <PubDate>
-//             <Year>1996</Year>
-//             <Month>Jan</Month>
-//         </PubDate>
-//     </JournalIssue>
-//     <Title>Ginekologia polska</Title>
-//     <ISOAbbreviation>Ginekol. Pol.</ISOAbbreviation>
-// </Journal>
+
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct Journal {
     #[serde(rename = "ISSN")]
@@ -57,37 +47,28 @@ struct Journal {
     #[serde(rename = "JournalIssue")]
     journal_issue: JournalIssue,
     #[serde(rename = "Title")]
-    title: Title,
+    title: Option<Title>,
     #[serde(rename = "ISOAbbreviation")]
     abbreviation: Option<Abbreviation>,
 }
 
 impl Journal {
-    // fn year(&self) -> Result<u32, std::num::ParseIntError> {
-    //     match self.journal_issue.year() {
-    //         Some(v) => str::parse::<u32>(&v),
-    //         _ => str::parse::<u32>(""),
-    //     }
-    // }
+    fn year(&self) -> Result<u32, std::num::ParseIntError> {
+        match self.journal_issue.year() {
+            Some(v) => str::parse::<u32>(&v),
+            _ => str::parse::<u32>(""),
+        }
+    }
 }
 
-//<ISSN IssnType="Print">0095-3814</ISSN>
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct ISSN {
     #[serde(rename = "@IssnType")]
     issn_type: String,
     #[serde(rename = "$value")]
-    value: Option<String>,
+    value: String,
 }
 
-//<JournalIssue CitedMedium="Print">
-//    <Volume>3</Volume>
-//    <Issue>1</Issue>
-//    <PubDate>
-//        <Year>1976</Year>
-//        <Season>Fall</Season>
-//    </PubDate>
-//</JournalIssue>
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct JournalIssue {
     #[serde(rename = "@CitedMedium")]
@@ -101,21 +82,21 @@ struct JournalIssue {
 }
 
 impl JournalIssue {
-    // fn year(&self) -> Option<String> {
-    //     self.pubdate.year()
-    // }
+    fn year(&self) -> Option<String> {
+        self.pubdate.year()
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct Volume {
     #[serde(rename = "$value")]
-    value: Option<String>,
+    value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct Issue {
     #[serde(rename = "$value")]
-    value: Option<String>,
+    value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -127,39 +108,39 @@ struct PubDate {
 }
 
 impl PubDate {
-    // fn year(&self) -> Option<String> {
-    //     if self.year_op.is_some() {
-    //         self.year_op.clone()
-    //     } else if self.medline_date_op.is_some() {
-    //         let op = self.medline_date_op.clone();
-    //         op.map(|v| v.year())
-    //     } else {
-    //         self.year_op.clone()
-    //     }
-    // }
+    fn year(&self) -> Option<String> {
+        if self.year_op.is_some() {
+            self.year_op.clone()
+        } else if self.medline_date_op.is_some() {
+            let op = self.medline_date_op.clone();
+            op.map(|v| v.year())
+        } else {
+            self.year_op.clone()
+        }
+    }
 }
 
 // <MedlineDate>1998 Mar-Apr</MedlineDate>
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct MedlineDate {
     #[serde(rename = "$value")]
-    value: Option<String>,
+    value: String,
 }
 
 impl MedlineDate {
-    // fn year(&self) -> String {
-    //     let it = self.value.chars();
-    //     String::from_iter(
-    //         it.skip_while(|c| !c.is_ascii_digit())
-    //             .take_while(|c| c.is_ascii_digit()),
-    //     )
-    // }
+    fn year(&self) -> String {
+        let it = self.value.chars();
+        String::from_iter(
+            it.skip_while(|c| !c.is_ascii_digit())
+                .take_while(|c| c.is_ascii_digit()),
+        )
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct AtticleTitle {
     #[serde(rename = "$value")]
-    value: Option<String>,
+    value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -169,60 +150,71 @@ struct AbstractText {
     #[serde(rename = "@NlmCategory")]
     nlm_category: Option<String>,
     #[serde(rename = "$value")]
-    value: Option<String>,
+    value: String,
 }
-
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Summary {
+struct CopyrightInformation {
+    #[serde(rename = "$value")]
+    value: String,
+}
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct Abstract {
+    //TODO: AbstractText missing
     #[serde(rename = "AbstractText")]
-    parts: Vec<AbstractText>,
+    abstract_text: Option<Vec<AbstractText>>,
+    #[serde(rename = "CopyrightInformation")]
+    copyright_information: Option<CopyrightInformation>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct MedlinePgn {
     #[serde(rename = "$value")]
-    value: Option<String>,
+    value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct Pagination {
     #[serde(rename = "MedlinePgn")]
-    pages: MedlinePgn,
+    medline_pgn: Option<MedlinePgn>,
 }
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct LastName {
     #[serde(rename = "$value")]
-    value: Option<String>,
+    value: String,
 }
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct ForeName {
     #[serde(rename = "$value")]
-    value: Option<String>,
+    value: String,
 }
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct Initials {
-    #[serde(rename = "$value")]
-    value: Option<String>,
+    // #[serde(rename = "$value")]
+    #[serde(alias = "value")]
+    #[serde(rename(serialize = "value", deserialize = "$value"))]
+    value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct CollectiveName {
     #[serde(rename = "$value")]
-    value: Option<String>,
+    value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct Author {
     #[serde(rename = "@ValidYN")]
-    valid_flag: String,
+    valid_yn: Option<String>,
+    #[serde(rename = "@Type")]
+    author_type: Option<String>,
     #[serde(rename = "LastName")]
-    the_last_name: Option<LastName>,
+    last_name: Option<LastName>,
     #[serde(rename = "ForeName")]
-    the_fore_name: Option<ForeName>,
+    fore_name: Option<ForeName>,
     #[serde(rename = "Initials")]
-    the_initials: Option<Initials>,
+    initials: Option<Initials>,
     #[serde(rename = "CollectiveName")]
-    the_collective: Option<CollectiveName>,
+    collective_name: Option<CollectiveName>,
     #[serde(rename = "AffiliationInfo")]
     affiliation_info: Option<Vec<AffiliationInfo>>,
 }
@@ -238,21 +230,23 @@ impl Author {
     //     }
     // }
 
-    fn is_validated(&self) -> bool {
-        self.valid_flag == "Y"
-    }
+    // fn is_validated(&self) -> bool {
+    //     self.valid_flag == "Y"
+    // }
 }
 
+//AffiliationInfo that contain single empty Affiliation will be
+//deserialized as Option<Vec<Affiliation>>
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct AffiliationInfo {
     #[serde(rename = "Affiliation")]
-    affiliation: Vec<Affiliation>,
+    affiliation: Option<Vec<Affiliation>>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct Affiliation {
     #[serde(rename = "$value")]
-    value: Option<String>,
+    value: String,
 }
 
 impl Author {
@@ -270,33 +264,26 @@ struct AuthorList {
 }
 
 impl AuthorList {
-    fn is_complete(&self) -> bool {
-        self.complete_flag == "Y"
-    }
+    // fn is_complete(&self) -> bool {
+    //     self.complete_flag == "Y"
+    // }
 }
 
 // <Language>eng</Language>
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct Language {
     #[serde(rename = "$value")]
-    value: Option<String>,
+    value: String,
 }
 
-// <PublicationType UI="D016446">Consensus Development Conference</PublicationType>
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct PublicationType {
     #[serde(rename = "@UI")]
     ui: String,
     #[serde(rename = "$value")]
-    value: Option<String>,
+    value: String,
 }
-// <PublicationTypeList>
-// <PublicationType UI="D016446">Consensus Development Conference</PublicationType>
-// <PublicationType UI="D016447">Consensus Development Conference, NIH</PublicationType>
-// <PublicationType UI="D016431">Guideline</PublicationType>
-// <PublicationType UI="D016428">Journal Article</PublicationType>
-// <PublicationType UI="D016454">Review</PublicationType>
-// </PublicationTypeList>
+
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct PublicationTypeList {
     #[serde(rename = "PublicationType")]
@@ -311,29 +298,91 @@ struct ELocationID {
     #[serde(rename = "@ValidYN")]
     valid_flag: String,
     #[serde(rename = "$value")]
+    value: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct GrantID {
+    #[serde(rename = "$value")]
     value: Option<String>,
+}
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct Acronym {
+    #[serde(rename = "$value")]
+    value: String,
+}
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct Agency {
+    #[serde(rename = "$value")]
+    value: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct Grant {
+    #[serde(rename = "GrantID")]
+    grant_id: Option<GrantID>,
+    #[serde(rename = "Acronym")]
+    acronym: Option<Acronym>,
+    //TODO: Agency is missing
+    #[serde(rename = "Agency")]
+    agency: Option<Agency>,
+    //TODO: Contry missing
+    #[serde(rename = "Country")]
+    country: Option<Country>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct GrantList {
+    #[serde(rename = "@CompleteYN")]
+    complete_yn: Option<String>,
+    #[serde(rename = "Grant")]
+    grant: Vec<Grant>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct VernacularTitle {
+    #[serde(rename = "$value")]
+    value: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct ArticleDate {
+    #[serde(rename = "Year")]
+    year: String,
+    #[serde(rename = "Month")]
+    month: String,
+    #[serde(rename = "Day")]
+    day: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct Article {
+    #[serde(rename = "@PubModel")]
+    pub_model: String,
     #[serde(rename = "Journal")]
     journal: Journal,
     #[serde(rename = "ArticleTitle")]
-    title: AtticleTitle,
-    #[serde(rename = "Abstract")]
-    summary: Option<Summary>,
+    article_title: Option<AtticleTitle>,
     #[serde(rename = "Pagination")]
     pagination: Option<Pagination>,
+    #[serde(rename = "ELocationID")]
+    elocation_id: Option<Vec<ELocationID>>,
+    #[serde(rename = "Abstract")]
+    summary: Option<Abstract>,
     #[serde(rename = "AuthorList")]
     author_list: Option<AuthorList>,
     #[serde(rename = "Language")]
     language: Vec<Language>,
     #[serde(rename = "DataBankList")]
     data_bank_list: Option<DataBankList>,
+    #[serde(rename = "GrantList")]
+    grant_list: Option<GrantList>,
     #[serde(rename = "PublicationTypeList")]
     publication_type_list: Option<PublicationTypeList>,
-    #[serde(rename = "ELocationID")]
-    elocation_id: Option<Vec<ELocationID>>,
+    #[serde(rename = "VernacularTitle")]
+    vernacular_title: Option<VernacularTitle>,
+    #[serde(rename = "ArticleDate")]
+    article_date: Option<Vec<ArticleDate>>,
 }
 
 impl Article {
@@ -341,47 +390,41 @@ impl Article {
     //     self.journal.year()
     // }
 
-    fn authors(&self) -> Vec<Author> {
-        match &self.author_list {
-            Some(list) => list.authors.clone(),
-            _ => Vec::new(),
-        }
-    }
+    // fn authors(&self) -> Vec<Author> {
+    //     match &self.author_list {
+    //         Some(list) => list.authors.clone(),
+    //         _ => Vec::new(),
+    //     }
+    // }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct Country {
     #[serde(rename = "$value")]
-    value: Option<String>,
+    value: String,
 }
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct MedlineTA {
     #[serde(rename = "$value")]
-    value: Option<String>,
+    value: String,
 }
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct NlmUniqueID {
     #[serde(rename = "$value")]
-    value: Option<String>,
+    value: String,
 }
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct ISSNLinking {
     #[serde(rename = "$value")]
-    value: Option<String>,
+    value: String,
 }
 
-// <MedlineJournalInfo>
-// <Country>United States</Country>
-// <MedlineTA>JAMA</MedlineTA>
-// <NlmUniqueID>7501160</NlmUniqueID>
-// <ISSNLinking>0098-7484</ISSNLinking>
-// </MedlineJournalInfo>
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct MedlineJournalInfo {
     #[serde(rename = "Country")]
-    country: Country,
+    country: Option<Country>,
     #[serde(rename = "MedlineTA")]
-    medline_ta: MedlineTA,
+    medline_ta: Option<MedlineTA>,
     #[serde(rename = "NlmUniqueID")]
     nlm_unique_id: NlmUniqueID,
     #[serde(rename = "ISSNLinking")]
@@ -393,9 +436,12 @@ struct DescriptorName {
     #[serde(rename = "@UI")]
     ui: String,
     #[serde(rename = "@MajorTopicYN")]
-    major_topic_flag: String,
+    major_topic_yn: Option<String>,
+    #[serde(rename = "@Type")]
+    descriptor_type: Option<String>,
+
     #[serde(rename = "$value")]
-    value: Option<String>,
+    value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -403,16 +449,11 @@ struct QualifierName {
     #[serde(rename = "@UI")]
     ui: String,
     #[serde(rename = "@MajorTopicYN")]
-    major_topic_flag: String,
+    major_topic_yn: Option<String>,
     #[serde(rename = "$value")]
-    value: Option<String>,
+    value: String,
 }
 
-//<MeshHeading>
-//    <DescriptorName UI="D018290" MajorTopicYN="N">Cervical Intraepithelial Neoplasia</DescriptorName>
-//    <QualifierName UI="Q000145" MajorTopicYN="N">classification</QualifierName>
-//    <QualifierName UI="Q000473" MajorTopicYN="Y">pathology</QualifierName>
-//</MeshHeading>
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct MeshHeading {
     #[serde(rename = "DescriptorName")]
@@ -421,13 +462,6 @@ struct MeshHeading {
     qualifier_name: Option<Vec<QualifierName>>,
 }
 
-// <MeshHeadingList>
-//     <MeshHeading>
-//         <DescriptorName UI="D018290" MajorTopicYN="N">Cervical Intraepithelial Neoplasia</DescriptorName>
-//         <QualifierName UI="Q000145" MajorTopicYN="N">classification</QualifierName>
-//         <QualifierName UI="Q000473" MajorTopicYN="Y">pathology</QualifierName>
-//     </MeshHeading>
-// </MeshHeadingList>
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct MeshHeadingList {
     #[serde(rename = "MeshHeading")]
@@ -437,7 +471,7 @@ struct MeshHeadingList {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct RegistryNumber {
     #[serde(rename = "$value")]
-    value: Option<String>,
+    value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -445,13 +479,9 @@ struct NameOfSubstance {
     #[serde(rename = "@UI")]
     ui: String,
     #[serde(rename = "$value")]
-    value: Option<String>,
+    value: String,
 }
 
-//<Chemical>
-//    <RegistryNumber>0</RegistryNumber>
-//    <NameOfSubstance UI="D001426">Bacterial Proteins</NameOfSubstance>
-//</Chemical>
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct Chemical {
     #[serde(rename = "RegistryNumber")]
@@ -460,77 +490,53 @@ struct Chemical {
     name_of_substance: NameOfSubstance,
 }
 
-// <ChemicalList>
-//     <Chemical>
-//         <RegistryNumber>0</RegistryNumber>
-//         <NameOfSubstance UI="D001426">Bacterial Proteins</NameOfSubstance>
-//     </Chemical>
-//     <Chemical>
-//         <RegistryNumber>0</RegistryNumber>
-//         <NameOfSubstance UI="D003598">Cytoskeletal Proteins</NameOfSubstance>
-//     </Chemical>
-// </ChemicalList>
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct ChemicalList {
     #[serde(rename = "Chemical")]
     chemical: Vec<Chemical>,
 }
 
-//<Keyword MajorTopicYN="N">Bioethics and Professional Ethics</Keyword>
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct Keyword {
     #[serde(rename = "@MajorTopicYN")]
-    major_topic_flag: String,
+    major_topic_yn: Option<String>,
     #[serde(rename = "$value")]
-    value: Option<Vec<String>>,
+    value: Option<String>,
 }
 
-// <KeywordList Owner="KIE">
-//   <Keyword MajorTopicYN="N">Bioethics and Professional Ethics</Keyword>
-//   <Keyword MajorTopicYN="N">National Bioethics Advisory Commission</Keyword>
-//   <Keyword MajorTopicYN="N">Popular Approach/Source</Keyword>
-// </KeywordList>
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct KeywordList {
+    #[serde(rename = "@Owner")]
+    owner: Option<String>,
     #[serde(rename = "Keyword")]
-    keyword: Vec<Keyword>,
+    keyword: Option<Vec<Keyword>>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct DataBankName {
     #[serde(rename = "$value")]
-    value: Option<String>,
+    value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct AccessionNumber {
     #[serde(rename = "$value")]
-    value: Option<String>,
+    value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct AccessionNumberList {
     #[serde(rename = "AccessionNumber")]
-    accession_number: Vec<AccessionNumber>,
+    accession_number: Option<Vec<AccessionNumber>>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct DataBank {
     #[serde(rename = "DataBankName")]
-    data_bank_name: DataBankName,
+    data_bank_name: Option<DataBankName>,
     #[serde(rename = "AccessionNumberList")]
     accession_number_list: AccessionNumberList,
 }
-
-// <DataBankList CompleteYN="N">
-// <DataBank>
-//     <DataBankName>GENBANK</DataBankName>
-//     <AccessionNumberList>
-//         <AccessionNumber>Z93128</AccessionNumber>
-//         <AccessionNumber>Z93157</AccessionNumber>
-//     </AccessionNumberList>
-// </DataBank>
-// </DataBankList>
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct DataBankList {
@@ -541,25 +547,207 @@ struct DataBankList {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+struct Year {
+    #[serde(rename = "$value")]
+    value: String,
+}
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct Month {
+    #[serde(rename = "$value")]
+    value: String,
+}
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct Day {
+    #[serde(rename = "$value")]
+    value: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct DateCompleted {
+    #[serde(rename = "Year")]
+    year: Year,
+    #[serde(rename = "Month")]
+    month: Month,
+    #[serde(rename = "Day")]
+    day: Day,
+}
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct DateRevised {
+    #[serde(rename = "Year")]
+    year: Year,
+    #[serde(rename = "Month")]
+    month: Month,
+    #[serde(rename = "Day")]
+    day: Day,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct SupplMeshName {
+    #[serde(rename = "Type")]
+    supp_mesh_name_type: Option<String>,
+    #[serde(rename = "@UI")]
+    ui: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct SupplMeshList {
+    #[serde(rename = "SupplMeshName")]
+    suppl_mesh_name: Vec<SupplMeshName>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct CitationSubset {
+    #[serde(rename = "$value")]
+    value: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct RefSource {
+    #[serde(rename = "$value")]
+    value: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct Note {
+    #[serde(rename = "$value")]
+    note: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct CommentsCorrections {
+    #[serde(rename = "@RefType")]
+    ref_type: String,
+
+    #[serde(rename = "RefSource")]
+    ref_source: Option<RefSource>,
+    #[serde(rename = "PMID")]
+    pmid: Option<PMID>,
+    #[serde(rename = "Note")]
+    note: Option<Note>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct CommentsCorrectionsList {
+    #[serde(rename = "CommentsCorrections")]
+    comments_corrections: Vec<CommentsCorrections>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct GeneSymbol {
+    #[serde(rename = "$value")]
+    value: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct GeneSymbolList {
+    #[serde(rename = "GeneSymbol")]
+    gene_symbol: Vec<GeneSymbol>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct PersonalNameSubject {
+    #[serde(rename = "LastName")]
+    last_name: LastName,
+    #[serde(rename = "ForeName")]
+    fore_name: Option<String>,
+    #[serde(rename = "Initials")]
+    initials: Option<String>,
+    #[serde(rename = "Suffix")]
+    suffix: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct PersonalNameSubjectList {
+    #[serde(rename = "PersonalNameSubject")]
+    personal_name_subject: Vec<PersonalNameSubject>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct OtherID {
+    #[serde(rename = "@Source")]
+    source: String,
+    #[serde(rename = "$value")]
+    value: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct OtherAbstract {
+    #[serde(rename = "@Type")]
+    other_abstract_type: String,
+    #[serde(rename = "@Language")]
+    language: Option<String>,
+    //TODO: AbstractText missing in some records
+    #[serde(rename = "AbstractText")]
+    abstract_text: Option<Vec<AbstractText>>,
+    #[serde(rename = "CopyrightInformation")]
+    copyright_information: Option<CopyrightInformation>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
 struct MedlineCitation {
-    // #[serde(rename = "@Status")]
-    // status: String,
-    // #[serde(rename = "@IndexingMethod")]
-    // indexing_method: Option<String>,
-    // #[serde(rename = "@Owner")]
-    // owner: String,
+    #[serde(rename = "@Status")]
+    status: String,
+
+    #[serde(rename = "@VersionID")]
+    version_id: Option<String>,
+
+    #[serde(rename = "@VersionDate")]
+    version_date: Option<String>,
+
+    #[serde(rename = "@IndexingMethod")]
+    indexing_method: Option<String>,
+
+    #[serde(rename = "@Owner")]
+    owner: Option<String>,
+
     #[serde(rename = "PMID")]
     pmid: PMID,
-    // #[serde(rename = "Article")]
-    // article: Article,
-    // #[serde(rename = "MedlineJournalInfo")]
-    // medline_journal_info: MedlineJournalInfo,
-    // #[serde(rename = "MeshHeadingList")]
-    // mesh_heading_list: Option<MeshHeadingList>,
-    // #[serde(rename = "ChemicalList")]
-    // chemical_list: Option<ChemicalList>,
-    // #[serde(rename = "KeywordList")]
-    // keyword_list: Option<Vec<KeywordList>>,
+
+    #[serde(rename = "DateCompleted")]
+    date_completed: Option<DateCompleted>,
+
+    #[serde(rename = "DateRevised")]
+    date_revised: Option<DateCompleted>,
+
+    #[serde(rename = "Article")]
+    article: Article,
+
+    #[serde(rename = "MedlineJournalInfo")]
+    medline_journal_info: MedlineJournalInfo,
+
+    #[serde(rename = "ChemicalList")]
+    chemical_list: Option<ChemicalList>,
+
+    #[serde(rename = "SupplMeshList")]
+    suppl_mesh_list: Option<SupplMeshList>,
+
+    #[serde(rename = "CitationSubset")]
+    citation_subset: Option<Vec<CitationSubset>>,
+
+    #[serde(rename = "CommentsCorrectionsList")]
+    comments_corrections_list: Option<CommentsCorrectionsList>,
+
+    #[serde(rename = "GeneSymbolList")]
+    gene_symbol_list: Option<GeneSymbolList>,
+
+    #[serde(rename = "MeshHeadingList")]
+    mesh_heading_list: Option<MeshHeadingList>,
+
+    #[serde(rename = "NumberOfReferences")]
+    number_of_references: Option<String>,
+
+    #[serde(rename = "PersonalNameSubjectList")]
+    personal_name_subject_list: Option<PersonalNameSubjectList>,
+
+    #[serde(rename = "OtherID")]
+    other_id: Option<Vec<OtherID>>,
+
+    #[serde(rename = "OtherAbstract")]
+    other_abstract: Option<Vec<OtherAbstract>>,
+
+    #[serde(rename = "KeywordList")]
+    keyword_list: Option<Vec<KeywordList>>,
+    //TODO: CoiStatement?, SpaceFlightMission*, InvestigatorList?, GeneralNote*
 }
 
 impl MedlineCitation {
@@ -596,7 +784,7 @@ impl ArticleId {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct ArticleIdList {
     #[serde(rename = "ArticleId")]
-    article_ids: Vec<ArticleId>,
+    article_ids: Option<Vec<ArticleId>>,
 }
 
 impl ArticleIdList {
@@ -610,6 +798,8 @@ impl ArticleIdList {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct Reference {
+    #[serde(rename = "Citation")]
+    citation: Option<String>,
     #[serde(rename = "ArticleIdList")]
     article_id_list: Option<ArticleIdList>,
 }
@@ -624,14 +814,18 @@ impl Reference {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct ReferenceList {
+    #[serde(rename = "@Title")]
+    title: Option<String>,
     #[serde(rename = "Reference")]
-    references: Option<Vec<Reference>>,
+    reference: Option<Vec<Reference>>,
+    #[serde(rename = "ReferenceList")]
+    reference_list: Option<Vec<ReferenceList>>,
 }
 
 impl ReferenceList {
     // fn pubmed_ids(&self) -> Vec<u32> {
     //     if self.references.is_some() {
-            
+
     //         let it = self.references.as_ref().unwrap().iter();
     //         let found = it
     //             .map(|i| i.pubmed_id())
@@ -648,32 +842,95 @@ impl ReferenceList {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct PublicationStatus {
     #[serde(rename = "$value")]
-    value: Option<String>,
+    value: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct Hour {
+    #[serde(rename = "$value")]
+    value: String,
+}
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct Minute {
+    #[serde(rename = "$value")]
+    value: String,
+}
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct Second {
+    #[serde(rename = "$value")]
+    value: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct PubMedPubDate {
+    #[serde(rename = "@PubStatus")]
+    pub_status: String,
+    #[serde(rename = "Year")]
+    year: Year,
+    #[serde(rename = "Month")]
+    month: Month,
+    #[serde(rename = "Day")]
+    day: Day,
+    #[serde(rename = "Hour")]
+    hour: Option<Hour>,
+    #[serde(rename = "Minute")]
+    minute: Option<Minute>,
+    #[serde(rename = "Second")]
+    second: Option<Second>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct History {
+    #[serde(rename = "PubMedPubDate")]
+    pubmed_pub_date: Vec<PubMedPubDate>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct Param {
+    #[serde(rename = "@Name")]
+    name: String,
+    #[serde(rename = "$value")]
+    value: String,
+}
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct Object {
+    #[serde(rename = "Type")]
+    object_type: String,
+    #[serde(rename = "Param")]
+    param: Option<Vec<Param>>,
+}
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct ObjectList {
+    #[serde(rename = "Object")]
+    object: Vec<Object>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct PubmedData {
-    // #[serde(rename = "ReferenceList")]
-    // reference_list: Option<Vec<ReferenceList>>,
-    // #[serde(rename = "PublicationStatus")]
-    // publication_status: PublicationStatus,
+    #[serde(rename = "History")]
+    history: Option<History>,
+    #[serde(rename = "ReferenceList")]
+    reference_list: Option<Vec<ReferenceList>>,
+    #[serde(rename = "PublicationStatus")]
+    publication_status: PublicationStatus,
     #[serde(rename = "ArticleIdList")]
     article_id_list: ArticleIdList,
+    #[serde(rename = "ObjectList")]
+    object_list: Option<ObjectList>,
 }
 
 impl PubmedData {
-
     // fn pubmed_references(&self) -> Vec<u32> {
     //     match &self.reference_list {
     //         Some(list) => {
-    //         let mut v:Vec<u32> = Vec::new(); 
+    //         let mut v:Vec<u32> = Vec::new();
     //         for rlist in list.iter() {
     //             let mut pmids = rlist.pubmed_ids();
     //             v.append(&mut pmids);
     //         }
     //         v },
     //         _ => Vec::new()
-    //     } 
+    //     }
     // }
 
     // fn pmid(&self) -> u32 {
@@ -683,14 +940,13 @@ impl PubmedData {
 
 #[derive(Serialize, Deserialize, Debug)]
 struct PubmedArticle {
-    // #[serde(rename = "MedlineCitation")]
-    // medline_citation: MedlineCitation,
+    #[serde(rename = "MedlineCitation")]
+    medline_citation: MedlineCitation,
     #[serde(rename = "PubmedData")]
-    pubmed_data: PubmedData,
+    pubmed_data: Option<PubmedData>,
 }
 
 impl PubmedArticle {
-
     // fn pubmed_id(&self) -> Result<u32, ParseIntError> {
     //     self.medline_citation.id()
     // }
@@ -698,6 +954,304 @@ impl PubmedArticle {
     // fn pubmed_references(&self) -> Vec<u32> {
     //     self.pubmed_data.pubmed_references()
     // }
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct PublisherName {
+    #[serde(rename = "$value")]
+    value: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct PublisherLocation {
+    #[serde(rename = "$value")]
+    value: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct Publisher {
+    #[serde(rename = "PublisherName")]
+    publisher_name: PublisherName,
+    publisher_location: Option<PublisherLocation>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct BookTitle {
+    #[serde(rename = "$value")]
+    value: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct Season {
+    #[serde(rename = "$value")]
+    value: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct EndingDate {
+    #[serde(rename = "Year")]
+    year: Year,
+    #[serde(rename = "Month")]
+    month: Month,
+    #[serde(rename = "Day")]
+    day: Option<Day>,
+    #[serde(rename = "Season")]
+    season: Option<Season>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct BeginningDate {
+    #[serde(rename = "Year")]
+    year: Year,
+    #[serde(rename = "Month")]
+    month: Month,
+    #[serde(rename = "Day")]
+    day: Option<Day>,
+    #[serde(rename = "Season")]
+    season: Option<Season>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct Suffix {
+    #[serde(rename = "$value")]
+    value: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct Identifier {
+    #[serde(rename = "Source")]
+    source: String,
+    #[serde(rename = "$value")]
+    value: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct Investigator {
+    #[serde(rename = "LastName")]
+    lastname: LastName,
+    #[serde(rename = "ForeName")]
+    fore_name: Option<ForeName>,
+    #[serde(rename = "Initials")]
+    initials: Option<Initials>,
+    #[serde(rename = "Suffix")]
+    suffix: Option<Suffix>,
+    #[serde(rename = "")]
+    identifier: Option<Vec<Identifier>>,
+    #[serde(rename = "")]
+    affilication_info: Option<Vec<AffiliationInfo>>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct InvestigatorList {
+    #[serde(rename = "Investigator")]
+    publisher: Investigator,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct VolumeTitle {
+    #[serde(rename = "$value")]
+    value: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct CollectionTitle {
+    #[serde(rename = "$value")]
+    value: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct Edition {
+    #[serde(rename = "$value")]
+    value: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct Medium {
+    #[serde(rename = "$value")]
+    value: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct Isbn {
+    #[serde(rename = "$value")]
+    value: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct ReportNumber {
+    #[serde(rename = "$value")]
+    value: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct Book {
+    //#[serde(rename="")]
+    #[serde(rename = "Publisher")]
+    publisher: Publisher,
+    #[serde(rename = "BookTitle")]
+    book_title: BookTitle,
+    #[serde(rename = "PubDate")]
+    pub_date: PubDate,
+    #[serde(rename = "BeginningDate")]
+    beginning_date: Option<BeginningDate>,
+    #[serde(rename = "EndingDate")]
+    ending_date: Option<EndingDate>,
+    #[serde(rename = "AuthorList")]
+    author_list: Option<Vec<AuthorList>>,
+    #[serde(rename = "InvestigatorList")]
+    investigator_list: Option<InvestigatorList>,
+    #[serde(rename = "Volume")]
+    volume: Option<Volume>,
+    #[serde(rename = "VolumeTitle")]
+    volume_title: Option<VolumeTitle>,
+    #[serde(rename = "Edition")]
+    edition: Option<Edition>,
+    #[serde(rename = "CollectionTitle")]
+    collection_title: Option<CollectionTitle>,
+    #[serde(rename = "Isbn")]
+    isbn: Option<Vec<Isbn>>,
+    #[serde(rename = "ELocationID")]
+    elocation_id: Option<Vec<ELocationID>>,
+    #[serde(rename = "Medium")]
+    medium: Option<Medium>,
+    #[serde(rename = "ReportNumber")]
+    report_number: Option<ReportNumber>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct LocationLabel {
+    #[serde(rename = "@Type")]
+    location_label_type: Option<String>,
+    #[serde(rename = "$value")]
+    value: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct ArticleTitle {
+    #[serde(rename = "$value")]
+    value: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct SectionTitle {
+    #[serde(rename = "$value")]
+    value: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct Section {
+    location_label: Option<LocationLabel>,
+    section_title: SectionTitle,
+    section: Option<Vec<Section>>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct Item {
+    #[serde(rename = "$value")]
+    value: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct ItemList {
+    #[serde(rename = "Item")]
+    item: Vec<Item>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct Sections {
+    #[serde(rename = "Section")]
+    section: Vec<Section>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct ContributionDate {
+    #[serde(rename = "Year")]
+    year: Year,
+
+    #[serde(rename = "Month")]
+    month: Option<Month>,
+
+    #[serde(rename = "Day")]
+    day: Option<Day>,
+    #[serde(rename = "Season")]
+    season: Option<Season>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct BookDocument {
+    #[serde(rename = "PMID")]
+    pmid: PMID,
+    #[serde(rename = "ArticleIdList")]
+    article_id_list: ArticleIdList,
+    #[serde(rename = "Book")]
+    book: Book,
+    #[serde(rename = "LocationLabel")]
+    location_label: Option<Vec<LocationLabel>>,
+    #[serde(rename = "ArticleTitle")]
+    article_title: Option<ArticleTitle>,
+    #[serde(rename = "VernacularTitle")]
+    vernacular_title: Option<VernacularTitle>,
+    #[serde(rename = "Pagination")]
+    pagination: Option<Pagination>,
+    #[serde(rename = "Language")]
+    language: Option<Vec<Language>>,
+    #[serde(rename = "AuthorList")]
+    author_list: Option<Vec<AuthorList>>,
+    #[serde(rename = "InvestigatorList")]
+    investigator_list: Option<InvestigatorList>,
+    #[serde(rename = "PublicationType")]
+    publication_type: Option<Vec<PublicationType>>,
+    #[serde(rename = "Abstract")]
+    summary: Option<Abstract>,
+    #[serde(rename = "Sections")]
+    sections: Option<Sections>,
+    #[serde(rename = "KeywordList")]
+    keyword_list: Option<Vec<KeywordList>>,
+    #[serde(rename = "ContributionDate")]
+    contribution_date: Option<ContributionDate>,
+    #[serde(rename = "DateRevised")]
+    date_revised: Option<DateRevised>,
+    #[serde(rename = "GrantList")]
+    grant_list: Option<GrantList>,
+    #[serde(rename = "ItemList")]
+    item_list: Option<Vec<ItemList>>,
+    #[serde(rename = "ReferenceList")]
+    reference_list: Option<Vec<ReferenceList>>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct PubmedBookData {
+    #[serde(rename = "History")]
+    history: Option<History>,
+
+    #[serde(rename = "PublicationStatus")]
+    publication_status: PublicationStatus,
+
+    #[serde(rename = "ArticleIdList")]
+    article_id_list: ArticleIdList,
+
+    #[serde(rename = "ObjectList")]
+    object_list: ObjectList,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct PubmedBookArticle {
+    #[serde(rename = "BookDocument")]
+    book_document: BookDocument,
+    #[serde(rename = "PubmedBookData")]
+    pubmed_book_data: Option<PubmedBookData>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct DeleteCitation {
+    #[serde(rename = "PMID")]
+    pmid: Vec<PMID>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct DeleteDocument {
+    #[serde(rename = "PMID")]
+    pmid: Option<Vec<PMID>>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -717,78 +1271,224 @@ impl PubmedGraphNode {
     // }
 }
 
-// reads from a start tag all the way to the corresponding end tag,
-// returns the bytes of the whole tag
-fn read_to_end_into_buffer<R: BufRead>(
-    reader: &mut Reader<R>,
-    start_tag: &BytesStart,
-    buf: &mut Vec<u8>,
+fn read_article<R: BufRead>(
+    reader: &mut quick_xml::Reader<R>,
 ) -> Result<Vec<u8>, quick_xml::Error> {
-    let mut depth = 0;
-    let mut output_buf: Vec<u8> = Vec::new();
-    let mut w = Writer::new(&mut output_buf);
-    let tag_name = start_tag.name();
-    w.write_event(Event::Start(start_tag.clone()))?;
-    loop {
-        buf.clear();
-        let event = reader.read_event_into(buf)?;
-        w.write_event(&event)?;
+    let mut depth: u32 = 0;
+    let mut buf: Vec<u8> = Vec::new();
+    let mut output: Vec<u8> = Vec::new();
+    let mut writer = Writer::new(&mut output);
+    let pubmed_article_end_tag = BytesEnd::new("PubmedArticle");
 
-        match event {
-            Event::Start(e) if e.name() == tag_name => depth += 1,
-            Event::End(e) if e.name() == tag_name => {
-                if depth == 0 {
-                    return Ok(output_buf);
+    match writer.write_event(Event::Start(BytesStart::new("PubmedArticle"))) {
+        Ok(_) => loop {
+            buf.clear();
+            match reader.read_event_into(&mut buf) {
+                Ok(event) => match event {
+                    Event::Start(e) if e.local_name().as_ref() == b"i" => {
+                        let t = Event::Text(BytesText::new("<i>"));
+                        match writer.write_event(t) {
+                            Ok(_) => (),
+                            Err(e) => return Err(e),
+                        }
+                    }
+                    Event::Start(e) if e.local_name().as_ref() == b"b" => {
+                        let t = Event::Text(BytesText::new("<b>"));
+                        match writer.write_event(t) {
+                            Ok(_) => (),
+                            Err(e) => return Err(e),
+                        }
+                    }
+                    Event::Start(e) if e.local_name().as_ref() == b"sup" => {
+                        let t = Event::Text(BytesText::new("<sup>"));
+                        match writer.write_event(t) {
+                            Ok(_) => (),
+                            Err(e) => return Err(e),
+                        }
+                    }
+                    Event::Start(e) if e.local_name().as_ref() == b"sub" => {
+                        let t = Event::Text(BytesText::new("<sub>"));
+                        match writer.write_event(t) {
+                            Ok(_) => (),
+                            Err(e) => return Err(e),
+                        }
+                    }
+                    Event::Start(e) if e.local_name().as_ref() == b"u" => {
+                        let t = Event::Text(BytesText::new("<u>"));
+                        match writer.write_event(t) {
+                            Ok(_) => (),
+                            Err(e) => return Err(e),
+                        }
+                    }
+
+                    Event::End(e) if e.local_name().as_ref() == b"i" => {
+                        let t = Event::Text(BytesText::new("</i>"));
+                        match writer.write_event(t) {
+                            Ok(_) => (),
+                            Err(e) => return Err(e),
+                        }
+                    }
+                    Event::End(e) if e.local_name().as_ref() == b"b" => {
+                        let t = Event::Text(BytesText::new("</b>"));
+                        match writer.write_event(t) {
+                            Ok(_) => (),
+                            Err(e) => return Err(e),
+                        }
+                    }
+                    Event::End(e) if e.local_name().as_ref() == b"sup" => {
+                        let t = Event::Text(BytesText::new("</sup>"));
+                        match writer.write_event(t) {
+                            Ok(_) => (),
+                            Err(e) => return Err(e),
+                        }
+                    }
+                    Event::End(e) if e.local_name().as_ref() == b"sub" => {
+                        let t = Event::Text(BytesText::new("</sub>"));
+                        match writer.write_event(t) {
+                            Ok(_) => (),
+                            Err(e) => return Err(e),
+                        }
+                    }
+                    Event::End(e) if e.local_name().as_ref() == b"u" => {
+                        let t = Event::Text(BytesText::new("</u>"));
+                        match writer.write_event(t) {
+                            Ok(_) => (),
+                            Err(e) => return Err(e),
+                        }
+                    }
+
+                    Event::Start(e)
+                        if e.name().prefix().as_ref().is_some()
+                            && e.name().prefix().unwrap().as_ref() == b"mml"
+                            && depth > 0 =>
+                    {
+                        let t = format!("<{}>", std::str::from_utf8(e.name().as_ref()).unwrap());
+                        match writer.write_event(Event::Text(BytesText::new(&t))) {
+                            Ok(_) => (),
+                            Err(e) => return Err(e),
+                        }
+                    }
+                    Event::End(e)
+                        if e.name().prefix().as_ref().is_some()
+                            && e.name().prefix().unwrap().as_ref() == b"mml"
+                            && depth > 0 =>
+                    {
+                        let t = format!("&lt/{}>", std::str::from_utf8(e.name().as_ref()).unwrap());
+                        match writer.write_event(Event::Text(BytesText::new(&t))) {
+                            Ok(_) => (),
+                            Err(e) => return Err(e),
+                        }
+                    }
+
+                    Event::Start(e) if e.local_name().as_ref() == b"DispFormula" => {
+                        let t = Event::Text(BytesText::new("<DispFormula>"));
+                        match writer.write_event(t) {
+                            Ok(_) => (),
+                            Err(e) => return Err(e),
+                        }
+                    }
+                    Event::End(e) if e.local_name().as_ref() == b"DispFormula" => {
+                        let t = Event::Text(BytesText::new("</DispFormula>"));
+                        match writer.write_event(t) {
+                            Ok(_) => (),
+                            Err(e) => return Err(e),
+                        }
+                    }
+
+                    Event::Start(e) => {
+                        depth += 1;
+                        match writer.write_event(Event::Start(e)) {
+                            Ok(_) => (),
+                            Err(e) => return Err(e),
+                        }
+                    }
+                    Event::Text(t) if depth > 0 => match writer.write_event(Event::Text(t)) {
+                        Ok(_) => (),
+                        Err(e) => return Err(e),
+                    },
+                    Event::End(e) if e == pubmed_article_end_tag => {
+                        match writer.write_event(Event::End(e)) {
+                            Ok(_) => return Ok(output),
+                            Err(e) => return Err(e),
+                        }
+                    }
+                    Event::End(e) => {
+                        depth -= 1;
+                        match writer.write_event(Event::End(e)) {
+                            Ok(_) => (),
+                            Err(e) => return Err(e),
+                        }
+                    }
+                    _ => (),
+                },
+                Err(e) => {
+                    return Err(e);
                 }
-                depth -= 1;
             }
-            Event::Eof => {
-                panic!("oh no")
-            }
-            _ => {}
-        }
+        },
+        Err(e) => return Err(e),
     }
 }
 
-fn read(file: &File) {
+fn read(path: &Path) {
+    //TODO: handle file open error
+    let file = File::open(path).unwrap();
     let buf_reader = BufReader::new(file);
     let decoder = GzDecoder::new(buf_reader);
     let gz = BufReader::new(decoder);
     let mut reader = Reader::from_reader(gz);
     let mut buf: Vec<u8> = Vec::new();
-    let mut article_buffer: Vec<u8> = Vec::new();
+
+    //TODO: remove
+    let errors_file_name = format!(
+        "./results/{}.txt",
+        path.file_name().unwrap().to_str().unwrap()
+    );
+    let errors_file_path = Path::new(&errors_file_name);
+    let mut errors_file = File::create(errors_file_path).unwrap();
+    // let mut errors_file = BufWriter::new(File::open(&path).unwrap());
+    //end remove
     loop {
+        buf.clear();
         match reader.read_event_into(&mut buf) {
             Ok(Event::Eof) => break,
-            Ok(Event::Start(e)) => match e.name().as_ref() {
-                b"PubmedArticle" => {
-                    let article_bytes =
-                        read_to_end_into_buffer(&mut reader, &e, &mut article_buffer).unwrap();
-                    let str = std::str::from_utf8(&article_bytes).unwrap();
-                    let mut deserializer = Deserializer::from_str(str);
-                    match PubmedArticle::deserialize(&mut deserializer) {
-                        Ok(pubmed_article) => {
-                            //    let id = pubmed_article.medline_citation.pmid;
-                            // println!("{:?}", &pubmed_article);
-                            // println!("{:?}",pubmed_article.medline_citation.article.year());
-                            // println!(
-                            //     "{:?}",
-                            //     PubmedGraphNode::from_pubmed_article(&pubmed_article)
-                            // );
-                            // println!("{}",serde_json::to_string_pretty(&pubmed_article).unwrap())
+            Ok(Event::Start(e)) if e.name().as_ref() == b"PubmedArticle" => {
+                match read_article(&mut reader) {
+                    Ok(bytes) => {
+                        // println!("{}", std::str::from_utf8(&bytes).unwrap());
+                        let mut deserializer =
+                            Deserializer::from_str(std::str::from_utf8(&bytes).unwrap());
+                        let article = PubmedArticle::deserialize(&mut deserializer);
+                        match article {
+                            Ok(_) => {
+                                // let json = serde_json::to_string_pretty(&article.unwrap()).unwrap();
+                                // println!("{:?}", json);
+                            }
+                            Err(e) => {
+                                // println!("{}", std::str::from_utf8(&bytes).unwrap());
+                                let err = format!("{}\n", e);
+                                errors_file.write_all(&err.as_bytes()).unwrap();
+                                errors_file.write_all(&bytes).unwrap();
+                                errors_file.write_all("\n".as_bytes()).unwrap();
+                                //panic!("{}", e)
+                            }
                         }
-                        Err(e) => {
-                            println!("{}", String::from_utf8(article_bytes).unwrap());
-                            panic!("{:?}", e)
-                        }
-                    };
+                    }
+                    Err(e) => {
+                        panic!("{}", e)
+                    }
                 }
-                _ => (),
-            },
+            }
             _ => (),
         }
-        buf.clear();
     }
+
+    //TODO: remove
+    errors_file.flush();
+    if errors_file.metadata().unwrap().len() == 0 {
+        std::fs::remove_file(errors_file_path).unwrap();
+    }
+    //end remove
 }
 
 fn read_directory(dir: &Path) -> Result<(), std::io::Error> {
@@ -799,14 +1499,9 @@ fn read_directory(dir: &Path) -> Result<(), std::io::Error> {
             let path = entry.path();
             if path.is_file() && path.extension().unwrap() == "gz" {
                 println!("{:?}", path);
-                let file = File::open(path)?;
-                read(&file);
+                // let file = File::open(path)?;
+                read(&path);
             }
-            // if path.is_dir() {
-            //     visit_dirs(&path, cb)?;
-            // } else {
-            //     cb(&entry);
-            // }
         }
     }
     Ok(())
@@ -815,17 +1510,6 @@ fn read_directory(dir: &Path) -> Result<(), std::io::Error> {
 fn main() {
     if let Some(user) = UserDirs::new() {
         let home_dir = user.home_dir();
-        // let test_file = home_dir.join("workspace/test-data/pubmedsample.xml.gz");
-        // let opened = File::open(test_file);
-
-        // let opened = File::open("/Users/sdoronin/Downloads/baseline/pubmed22n0001.xml.gz");
-        // match opened {
-        //     Ok(file) => read(&file),
-        //     Err(e) => {
-        //         panic!("{:?}", e)
-        //     }
-        // }
-
         let _ = read_directory(Path::new("/Users/sdoronin/Downloads/baseline"));
     }
 }
