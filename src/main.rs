@@ -3,6 +3,7 @@ use quick_xml::{de::Deserializer, events::{BytesEnd, BytesStart, BytesText, Even
 use quick_xml::Writer;
 use std::{fs::{read_dir, File}, path::Path};
 use std::io::{BufRead, BufReader, Write};
+use serde::{Deserialize};
 extern crate directories;
 use directories::UserDirs;
 
