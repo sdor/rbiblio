@@ -1,18 +1,19 @@
-use serde::{Serialize, Deserialize};
-
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct PMID {
     #[serde(rename = "@Version")]
-    version: String,
+    pub version: String,
     #[serde(rename = "$value")]
-    value: String,
+    pub value: String,
 }
 
 impl PMID {
-    fn id(&self) -> Result<u32, std::num::ParseIntError> {
+    pub fn id(&self) -> Result<u32, std::num::ParseIntError> {
         str::parse::<u32>(&self.value)
     }
+
+    // pub fn value(&self) -> String { self.value }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -1230,14 +1231,13 @@ pub struct PubmedBookArticle {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct DeleteCitation {
     #[serde(rename = "PMID")]
-    pmid: Vec<PMID>,
+    pub pmid: Vec<PMID>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct DeleteDocument {
     #[serde(rename = "PMID")]
-    pmid: Option<Vec<PMID>>,
+    pub pmid: Option<Vec<PMID>>,
 }
-
 
 

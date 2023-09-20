@@ -1,17 +1,23 @@
 use flate2::read::GzDecoder;
-use quick_xml::{de::Deserializer, events::{BytesEnd, BytesStart, BytesText, Event}, Reader};
 use quick_xml::Writer;
-use std::{fs::{read_dir, File}, path::Path};
+use quick_xml::{
+    de::Deserializer,
+    events::{BytesEnd, BytesStart, BytesText, Event},
+    Reader,
+};
+use serde::Deserialize;
 use std::io::{BufRead, BufReader, Write};
-use serde::{Deserialize};
+use std::{
+    fs::{read_dir, File},
+    path::Path,
+};
 extern crate directories;
 use directories::UserDirs;
 
+pub mod db;
 pub mod pubmed;
 
 use crate::pubmed::PubmedArticle;
-
-
 
 fn read_article<R: BufRead>(
     reader: &mut quick_xml::Reader<R>,
@@ -226,7 +232,7 @@ fn read(path: &Path) {
     }
 
     //TODO: remove
-    errors_file.flush();
+    let _ = errors_file.flush();
     if errors_file.metadata().unwrap().len() == 0 {
         std::fs::remove_file(errors_file_path).unwrap();
     }
@@ -251,7 +257,7 @@ fn read_directory(dir: &Path) -> Result<(), std::io::Error> {
 
 fn main() {
     if let Some(user) = UserDirs::new() {
-        let home_dir = user.home_dir();
+        let _ = user.home_dir();
         let _ = read_directory(Path::new("/Users/sdoronin/Downloads/baseline"));
     }
 }
