@@ -1,15 +1,17 @@
+extern crate dotenv;
 use flate2::read::GzDecoder;
-use futures::io::BufWriter;
 use quick_xml::de::Deserializer;
 use quick_xml::events::{BytesEnd, BytesStart, BytesText, Event};
-use quick_xml::name::QName;
+// use quick_xml::name::QName;
 use quick_xml::reader::Reader;
 use quick_xml::Writer;
 use serde::{Deserialize, Serialize};
 use std::fs::{read_dir, File};
-use std::io::{BufRead, BufReader, Cursor, Write};
-use std::num::ParseIntError;
+use std::io::{BufRead, BufReader, Write};
+// use std::num::ParseIntError;
 use std::path::Path;
+use dotenv::dotenv;
+use std::env;
 
 extern crate directories;
 use directories::UserDirs;
@@ -1260,16 +1262,6 @@ struct PubmedGraphNode {
     ids: Vec<u32>,
 }
 
-impl PubmedGraphNode {
-    // fn from_pubmed_article(
-    //     pubmed_article: &PubmedArticle,
-    // ) -> Result<PubmedGraphNode, ParseIntError> {
-
-    //     let id = pubmed_article.pubmed_data.pmid();
-    //     let ids = pubmed_article.pubmed_data.pubmed_references();
-    //     Ok(PubmedGraphNode { id, ids })
-    // }
-}
 
 fn read_article<R: BufRead>(
     reader: &mut quick_xml::Reader<R>,
@@ -1461,8 +1453,8 @@ fn read(path: &Path) {
                         let article = PubmedArticle::deserialize(&mut deserializer);
                         match article {
                             Ok(_) => {
-                                // let json = serde_json::to_string_pretty(&article.unwrap()).unwrap();
-                                // println!("{:?}", json);
+                                let json = serde_json::to_string_pretty(&article.unwrap()).unwrap();
+                                println!("{:?}", json);
                             }
                             Err(e) => {
                                 // println!("{}", std::str::from_utf8(&bytes).unwrap());
@@ -1508,8 +1500,10 @@ fn read_directory(dir: &Path) -> Result<(), std::io::Error> {
 }
 
 fn main() {
+    dotenv().ok();
+    let pubmed_baseline=env::var("PUBMED_BASELINE").unwrap();
     if let Some(user) = UserDirs::new() {
         let home_dir = user.home_dir();
-        let _ = read_directory(Path::new("/Users/sdoronin/Downloads/baseline"));
+        let _ = read_directory(Path::new(&pubmed_baseline));
     }
 }
