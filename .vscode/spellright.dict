@@ -1,0 +1,9 @@
+mongodb
+serde
+thiserror
+flate2
+bson
+tokio
+chrono
+rbiblio
+dotenv
