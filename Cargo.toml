@@ -8,12 +8,16 @@ edition = "2021"
 [dependencies]
 thiserror = "1.0.48"
 directories = "5.0.1"
-serde = {version = "1.0.188", features = ["derive"]}
+serde = { version = "1.0.188", features = ["derive"] }
 serde_json = "1.0.105"
-quick-xml = {version= "0.30.0", features = ["serialize"]}
+quick-xml = { version = "0.30.0", features = ["serialize"] }
 flate2 = "1.0.27"
 mongodb = "2.6.1"
 bson = { version = "2.7.0", features = ["chrono-0_4"] }
 futures = "0.3.28"
 tokio = "1.32.0"
 chrono = "0.4.31"
+async-stream = "0.3.5"
+rayon = "1.9.0"
+regex = "1.10.3"
+

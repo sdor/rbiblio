@@ -12,7 +12,10 @@ use std::{
     path::Path,
 };
 extern crate directories;
-use directories::UserDirs;
+use std::fs;
+use regex::Regex;
+use rayon::prelude::*;
+use std::sync::Arc;
 
 pub mod db;
 pub mod pubmed;
@@ -255,9 +258,45 @@ fn read_directory(dir: &Path) -> Result<(), std::io::Error> {
     Ok(())
 }
 
+fn process(path: &Path) {
+    println！("{}", path.display());  // Replace this with your actual processing logic
+}
+
 fn main() {
-    if let Some(user) = UserDirs::new() {
-        let _ = user.home_dir();
-        let _ = read_directory(Path::new("/Users/sdoronin/Downloads/baseline"));
+    // if let Some(user) = UserDirs::new() {
+    //     let _ = user.home_dir();
+    //     let _ = read_directory(Path::new("/Users/sdoronin/Downloads/baseline"));
+    // }
+
+
+
+    let dir = "/your/directory"; // Replace with your directory path
+    let re = Regex::new(r"\.xml\.gz$").unwrap();  // Regular expression for matching XML files
+    
+    let paths: Vec<_> = fs::read_dir(dir).expect("Something went wrong reading the dir")
+        .filter_map(Result::ok)
+        .filter(|p| p.file_type().unwrap().is_file())  // Only keep files
+        .filter(|p| re.is_match(&p.file_name().to_str().unwrap()))  // Match XML files
+        .map(|p| Arc::new(p.path()))
+        .collect();
+    
+    let cores = num_cpus::get() as usize;   // Get number of cores in CPU
+    let batch_size = 10;  // You can adjust this to your liking, but make sure it's not larger than the number of files or you could get an out-of-bounds error.
+    
+    for i in 0..paths.len() {
+        let start = (i / batch_size) * batch_size;
+        let end = if i % batch_size == 0 && i + batch_size < paths.len() { start + batch_size } else { paths.len() };
+        
+        // Create a new thread that will process the batch of files concurrently.
+        std::thread::spawn(move || {
+            for path in &paths[start..end] {
+                let p = Arc::clone(&path);
+                process(&p);  // Processing each file concurrently
+             }
+         });
     }
 }
+
+
+
+
