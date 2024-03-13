@@ -1457,12 +1457,12 @@ fn read(path: &Path) {
                                 println!("{:?}", json);
                             }
                             Err(e) => {
-                                // println!("{}", std::str::from_utf8(&bytes).unwrap());
+                                println!("{}", std::str::from_utf8(&bytes).unwrap());
                                 let err = format!("{}\n", e);
                                 errors_file.write_all(&err.as_bytes()).unwrap();
                                 errors_file.write_all(&bytes).unwrap();
                                 errors_file.write_all("\n".as_bytes()).unwrap();
-                                //panic!("{}", e)
+                                panic!("{}", e)
                             }
                         }
                     }
