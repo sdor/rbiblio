@@ -7,3 +7,5 @@ tokio
 chrono
 rbiblio
 dotenv
+pubmed
+rs
