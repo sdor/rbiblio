@@ -7,10 +7,12 @@ edition = "2021"
 
 [dependencies]
 
-dotenv = "0.15.0"
+# dotenv = "0.15.0"
 directories = "5.0.1"
 serde = {version = "1.0.188", features = ["derive"]}
 serde_json = "1.0.105"
-quick-xml = {version= "0.31.0", features = ["serialize"]}
-flate2 = "1.0.27"
+quick-xml = {version= "0.31.0", features = ["serialize","async-tokio"]}
+# flate2 = "1.0.27"
 futures = "0.3.28"
+tokio = { version = "1.0", features = ["full"] }
+async-compression = {version = "0.4.6", features = ["gzip","tokio"]}

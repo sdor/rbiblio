@@ -1,20 +1,17 @@
 // extern crate dotenv;
-// use flate2::read::GzDecoder;
-// use quick_xml::de::Deserializer;
-// use quick_xml::events::{BytesEnd, BytesStart, BytesText, Event};
-// use quick_xml::name::QName;
-// use quick_xml::reader::Reader;
-// use quick_xml::Writer;
-use serde::{Deserialize, Serialize};
-// use std::fs::{read_dir, File};
-// use std::io::{BufRead, BufReader, Write};
-// use std::num::ParseIntError;
-// use std::path::Path;
-// use dotenv::dotenv;
-// use std::env;
+use quick_xml::de::Deserializer;
+use quick_xml::events::{BytesEnd, BytesStart, BytesText, Event};
 
-// extern crate directories;
-// use directories::UserDirs;
+use quick_xml::reader::Reader;
+use quick_xml::Error;
+use quick_xml::Writer;
+use serde::{Deserialize, Serialize};
+use std::path::Path;
+use tokio::sync::mpsc;
+use tokio::task;
+
+use std::fs::FileType;
+// use std::io::{self, prelude::*};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct PMID {
@@ -22,12 +19,6 @@ struct PMID {
     version: String,
     #[serde(rename = "$value")]
     value: String,
-}
-
-impl PMID {
-    fn id(&self) -> Result<u32, std::num::ParseIntError> {
-        str::parse::<u32>(&self.value)
-    }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -54,20 +45,20 @@ struct Journal {
     abbreviation: Option<Abbreviation>,
 }
 
-impl Journal {
-    fn year(&self) -> Result<u32, std::num::ParseIntError> {
-        match self.journal_issue.year() {
-            Some(v) => str::parse::<u32>(&v),
-            _ => str::parse::<u32>(""),
-        }
-    }
-}
+// impl Journal {
+//     fn year(&self) -> Result<u32, std::num::ParseIntError> {
+//         match self.journal_issue.year() {
+//             Some(v) => str::parse::<u32>(&v),
+//             _ => str::parse::<u32>(""),
+//         }
+//     }
+// }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct ISSN {
     #[serde(rename = "@IssnType")]
     issn_type: String,
-    #[serde(rename = "$value")]
+    #[serde(rename = "$val wue")]
     value: String,
 }
 
@@ -83,11 +74,11 @@ struct JournalIssue {
     pubdate: PubDate,
 }
 
-impl JournalIssue {
-    fn year(&self) -> Option<String> {
-        self.pubdate.year()
-    }
-}
+// impl JournalIssue {
+//     fn year(&self) -> Option<String> {
+//         self.pubdate.year()
+//     }
+// }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct Volume {
@@ -109,18 +100,18 @@ struct PubDate {
     medline_date_op: Option<MedlineDate>,
 }
 
-impl PubDate {
-    fn year(&self) -> Option<String> {
-        if self.year_op.is_some() {
-            self.year_op.clone()
-        } else if self.medline_date_op.is_some() {
-            let op = self.medline_date_op.clone();
-            op.map(|v| v.year())
-        } else {
-            self.year_op.clone()
-        }
-    }
-}
+// impl PubDate {
+//     fn year(&self) -> Option<String> {
+//         if self.year_op.is_some() {
+//             self.year_op.clone()
+//         } else if self.medline_date_op.is_some() {
+//             let op = self.medline_date_op.clone();
+//             op.map(|v| v.year())
+//         } else {
+//             self.year_op.clone()
+//         }
+//     }
+// }
 
 // <MedlineDate>1998 Mar-Apr</MedlineDate>
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -129,15 +120,15 @@ struct MedlineDate {
     value: String,
 }
 
-impl MedlineDate {
-    fn year(&self) -> String {
-        let it = self.value.chars();
-        String::from_iter(
-            it.skip_while(|c| !c.is_ascii_digit())
-                .take_while(|c| c.is_ascii_digit()),
-        )
-    }
-}
+// impl MedlineDate {
+//     fn year(&self) -> String {
+//         let it = self.value.chars();
+//         String::from_iter(
+//             it.skip_while(|c| !c.is_ascii_digit())
+//                 .take_while(|c| c.is_ascii_digit()),
+//         )
+//     }
+// }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct AtticleTitle {
@@ -752,12 +743,6 @@ struct MedlineCitation {
     //TODO: CoiStatement?, SpaceFlightMission*, InvestigatorList?, GeneralNote*
 }
 
-impl MedlineCitation {
-    // fn id(&self) -> Result<u32, std::num::ParseIntError> {
-    //     self.pmid.id()
-    // }
-}
-
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct ArticleId {
     #[serde(rename = "@IdType")]
@@ -766,36 +751,10 @@ struct ArticleId {
     value: Option<String>,
 }
 
-impl ArticleId {
-    // fn is_pubmed_id(&self) -> bool {
-    //     self.id_type == "pubmed"
-    // }
-
-    // fn id(&self) -> Option<u32> {
-    //     if self.is_pubmed_id() {
-    //         match str::parse::<u32>(&self.value) {
-    //             Ok(i) => Some(i),
-    //             Err(_e) => None,
-    //         }
-    //     } else {
-    //         None
-    //     }
-    // }
-}
-
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct ArticleIdList {
     #[serde(rename = "ArticleId")]
     article_ids: Option<Vec<ArticleId>>,
-}
-
-impl ArticleIdList {
-    // fn pubmed_id(&self) -> Option<u32> {
-    //     let it = self.article_ids.iter();
-    //     let mut found = it.filter(|aid| aid.is_pubmed_id()).map(|aid| aid.id());
-    //     let r = found.next().flatten();
-    //     r
-    // }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -804,14 +763,6 @@ struct Reference {
     citation: Option<String>,
     #[serde(rename = "ArticleIdList")]
     article_id_list: Option<ArticleIdList>,
-}
-
-impl Reference {
-    // fn pubmed_id(&self) -> Option<u32> {
-    //     let mut found = self.article_id_list.iter().map(|list| list.pubmed_id());
-    //     let r = found.next().flatten();
-    //     r
-    // }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -921,41 +872,12 @@ struct PubmedData {
     object_list: Option<ObjectList>,
 }
 
-impl PubmedData {
-    // fn pubmed_references(&self) -> Vec<u32> {
-    //     match &self.reference_list {
-    //         Some(list) => {
-    //         let mut v:Vec<u32> = Vec::new();
-    //         for rlist in list.iter() {
-    //             let mut pmids = rlist.pubmed_ids();
-    //             v.append(&mut pmids);
-    //         }
-    //         v },
-    //         _ => Vec::new()
-    //     }
-    // }
-
-    // fn pmid(&self) -> u32 {
-    //     self.article_id_list.pubmed_id().unwrap()
-    // }
-}
-
 #[derive(Serialize, Deserialize, Debug)]
-struct PubmedArticle {
+pub struct PubmedArticle {
     #[serde(rename = "MedlineCitation")]
     medline_citation: MedlineCitation,
     #[serde(rename = "PubmedData")]
     pubmed_data: Option<PubmedData>,
-}
-
-impl PubmedArticle {
-    // fn pubmed_id(&self) -> Result<u32, ParseIntError> {
-    //     self.medline_citation.id()
-    // }
-
-    // fn pubmed_references(&self) -> Vec<u32> {
-    //     self.pubmed_data.pubmed_references()
-    // }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -1256,3 +1178,287 @@ struct DeleteDocument {
     pmid: Option<Vec<PMID>>,
 }
 
+pub async fn articles(path: String, tx: mpsc::Sender<PubmedArticle>) -> Result<(), Error> {
+    // Your function body here...
+    let path = Path::new(path.as_str());
+    let file = tokio::fs::File::open(path).await?;
+    let breader = tokio::io::BufReader::new(file);
+    let gz = async_compression::tokio::bufread::GzipDecoder::new(breader);
+    let gzreader = tokio::io::BufReader::new(gz);
+    let mut reader = Reader::from_reader(gzreader);
+    let mut output: Vec<u8> = Vec::new();
+    let mut writer = Writer::new(&mut output);
+    let mut buf: Vec<u8> = Vec::new();
+    let pubmed_article_start_tag = BytesStart::new("PubmedArticle");
+    let pubmed_article_end_tag = BytesEnd::new("PubmedArticle");
+    let mut depth = 0;
+    loop {
+        match reader.read_event_into_async(&mut buf).await {
+            Ok(Event::Eof) => {
+                return Ok({});
+            }
+            Ok(Event::Start(e)) if e == pubmed_article_start_tag => {
+                depth += 1;
+                match writer.write_event(Event::Start(e)) {
+                    Ok(_) => {}
+                    Err(e) => {
+                        return Err(e);
+                    }
+                };
+            }
+            Ok(Event::End(e)) if e == pubmed_article_end_tag => {
+                depth -= 1;
+                match writer.write_event(Event::End(e)) {
+                    Ok(_) => {
+                        let mut deserializer =
+                            Deserializer::from_str(std::str::from_utf8(writer.get_ref()).unwrap());
+                        let article = PubmedArticle::deserialize(&mut deserializer).unwrap();
+                        buf.clear();
+                        writer.get_mut().clear();
+                        tx.send(article).await.expect("Failed to send value");
+                        task::yield_now().await; // Yield control back to scheduler
+                    }
+                    Err(e) => {
+                        return Err(e);
+                    }
+                };
+            }
+            Ok(Event::Text(t)) if depth > 0 => {
+                match writer.write_event(Event::Text(t)) {
+                    Ok(_) => {}
+                    Err(e) => {
+                        return Err(e);
+                    }
+                };
+            }
+
+            Ok(Event::Start(e)) if depth > 0 && e.local_name().as_ref() == b"i" => {
+                let t = Event::Text(BytesText::new("<i>"));
+                match writer.write_event(t) {
+                    Ok(_) => {}
+                    Err(e) => {
+                        return Err(e);
+                    }
+                };
+            }
+            Ok(Event::Start(e)) if depth > 0 && e.local_name().as_ref() == b"b" => {
+                let t = Event::Text(BytesText::new("<b>"));
+                match writer.write_event(t) {
+                    Ok(_) => {}
+                    Err(e) => {
+                        return Err(e);
+                    }
+                };
+            }
+            Ok(Event::Start(e)) if depth > 0 && e.local_name().as_ref() == b"sup" => {
+                let t = Event::Text(BytesText::new("<sup>"));
+                match writer.write_event(t) {
+                    Ok(_) => {}
+                    Err(e) => {
+                        return Err(e);
+                    }
+                };
+            }
+            Ok(Event::Start(e)) if depth > 0 && e.local_name().as_ref() == b"sub" => {
+                let t = Event::Text(BytesText::new("<sub>"));
+                match writer.write_event(t) {
+                    Ok(_) => {}
+                    Err(e) => {
+                        return Err(e);
+                    }
+                };
+            }
+            Ok(Event::Start(e)) if depth > 0 && e.local_name().as_ref() == b"u" => {
+                let t = Event::Text(BytesText::new("<u>"));
+                match writer.write_event(t) {
+                    Ok(_) => {}
+                    Err(e) => {
+                        return Err(e);
+                    }
+                };
+            }
+            Ok(Event::End(e)) if depth > 0 && e.local_name().as_ref() == b"i" => {
+                let t = Event::Text(BytesText::new("</i>"));
+                match writer.write_event(t) {
+                    Ok(_) => {}
+                    Err(e) => {
+                        return Err(e);
+                    }
+                };
+            }
+            Ok(Event::End(e)) if depth > 0 && e.local_name().as_ref() == b"b" => {
+                let t = Event::Text(BytesText::new("</b>"));
+                match writer.write_event(t) {
+                    Ok(_) => {}
+                    Err(e) => {
+                        return Err(e);
+                    }
+                };
+            }
+            Ok(Event::End(e)) if depth > 0 && e.local_name().as_ref() == b"sup" => {
+                let t = Event::Text(BytesText::new("</sup>"));
+                match writer.write_event(t) {
+                    Ok(_) => {}
+                    Err(e) => {
+                        return Err(e);
+                    }
+                };
+            }
+            Ok(Event::End(e)) if depth > 0 && e.local_name().as_ref() == b"sub" => {
+                let t = Event::Text(BytesText::new("</sub>"));
+                match writer.write_event(t) {
+                    Ok(_) => {}
+                    Err(e) => {
+                        return Err(e);
+                    }
+                };
+            }
+            Ok(Event::End(e)) if depth > 0 && e.local_name().as_ref() == b"u" => {
+                let t = Event::Text(BytesText::new("</u>"));
+                match writer.write_event(t) {
+                    Ok(_) => {}
+                    Err(e) => {
+                        return Err(e);
+                    }
+                };
+            }
+            Ok(Event::Start(e))
+                if e.name().prefix().as_ref().is_some()
+                    && e.name().prefix().unwrap().as_ref() == b"mml"
+                    && depth > 0 =>
+            {
+                let t = format!("<{}>", std::str::from_utf8(e.name().as_ref()).unwrap());
+                match writer.write_event(Event::Text(BytesText::new(&t))) {
+                    Ok(_) => {}
+                    Err(e) => {
+                        return Err(e);
+                    }
+                };
+            }
+            Ok(Event::End(e))
+                if e.name().prefix().as_ref().is_some()
+                    && e.name().prefix().unwrap().as_ref() == b"mml"
+                    && depth > 0 =>
+            {
+                let t = format!("&lt/{}>", std::str::from_utf8(e.name().as_ref()).unwrap());
+                match writer.write_event(Event::Text(BytesText::new(&t))) {
+                    Ok(_) => {}
+                    Err(e) => {
+                        return Err(e);
+                    }
+                };
+            }
+            Ok(Event::Start(e)) if depth > 0 && e.local_name().as_ref() == b"DispFormula" => {
+                let t = Event::Text(BytesText::new("<DispFormula>"));
+                match writer.write_event(t) {
+                    Ok(_) => {}
+                    Err(e) => {
+                        return Err(e);
+                    }
+                };
+            }
+            Ok(Event::End(e)) if depth > 0 && e.local_name().as_ref() == b"DispFormula" => {
+                let t = Event::Text(BytesText::new("</DispFormula>"));
+                match writer.write_event(t) {
+                    Ok(_) => {}
+                    Err(e) => {
+                        return Err(e);
+                    }
+                };
+            }
+
+            Ok(Event::Start(e)) if depth > 0 => {
+                depth += 1;
+                match writer.write_event(Event::Start(e)) {
+                    Ok(_) => {}
+                    Err(e) => {
+                        return Err(e);
+                    }
+                };
+            }
+            Ok(Event::End(e)) if depth > 0 => {
+                depth -= 1;
+                match writer.write_event(Event::End(e)) {
+                    Ok(_) => {}
+                    Err(e) => {
+                        return Err(e);
+                    }
+                };
+            }
+            Ok(_) => {}
+            Err(e) => return Err(e),
+        }
+    }
+}
+
+pub async fn directory_articles(
+    path: String,
+    tx: mpsc::Sender<PubmedArticle>,
+) -> Result<(), std::io::Error> {
+    let fspath: &Path = Path::new(path.as_str());
+    let mut stream: tokio::fs::ReadDir = tokio::fs::read_dir(&fspath).await.unwrap();
+
+    while let Some(entry) = stream.next_entry().await? {
+        let file_type: FileType = entry.file_type().await?;
+        if file_type.is_file() {
+            let file_path = entry.path();
+            let file_extension: &std::ffi::OsStr = file_path.extension().unwrap_or_default();
+            if file_extension == "gz" {
+                let (producer, mut consumer) = mpsc::channel(10);
+                let pubmed_file_path = String::from(entry.path().to_str().unwrap());
+                let producer_handle = tokio::spawn(articles(pubmed_file_path, producer));
+
+                while let Some(article) = consumer.recv().await {
+                    tx.send(article).await.expect("Failed to send value");
+                    task::yield_now().await; // Yield control back to scheduler
+                }
+                match producer_handle.await {
+                    Ok(_) => {}
+                    Err(e) => {
+                        let cause = e.to_string();
+
+                        // Create an io::Error with a custom error message
+                        let err = std::io::Error::new(
+                            std::io::ErrorKind::Other,
+                            format!("Task join error: {}", cause),
+                        );
+                        return Err(err);
+                    }
+                }
+            }
+        }
+    }
+    Ok({})
+}
+
+//
+// use tokio::sync::mpsc;
+// use tokio::task;
+//async fn producer(tx: mpsc::Sender<i32>) {
+//     for i in 0..=5 {
+//         tx.send(i).await.expect("Failed to send value");
+//         task::yield_now().await; // Yield control back to scheduler
+//     }
+// }
+// async fn main() {
+//     let (tx, mut rx) = mpsc::channel(10);
+
+//     // Spawn the producer task
+//     let producer_handle = tokio::spawn(producer(tx));
+
+//     // Consume values from the channel
+//     while let Some(value) = rx.recv().await {
+//         println!("Received: {}", value);
+//     }
+
+//     // Await the producer task to finish
+//     producer_handle.await.expect("Producer task panicked");
+// }
+
+// In this example:
+
+// producer is an asynchronous function that sends values to a channel. After sending each value, it yields control back to the scheduler using task::yield_now().
+// In the main function, a channel is created, and the producer task is spawned.
+// The main function consumes values from the channel using rx.recv().await. As values are received, they are printed.
+// Finally, the main function awaits the completion of the producer task using producer_handle.await.
+// This way, you achieve a similar effect to yielding values from a coroutine by using channels and yielding control back to the scheduler when needed.

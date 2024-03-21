@@ -1,5 +1,6 @@
 [workspace]
 members = ["pubmed"]
+resolver = "2"
 # [package]
 # name = "rbiblio"
 # version = "0.1.0"
