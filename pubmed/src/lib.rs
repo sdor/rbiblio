@@ -6,6 +6,7 @@ use quick_xml::reader::Reader;
 use quick_xml::Error;
 use quick_xml::Writer;
 use serde::{Deserialize, Serialize};
+use std::num::ParseIntError;
 use std::path::Path;
 use tokio::sync::mpsc;
 use tokio::task;
@@ -58,7 +59,7 @@ struct Journal {
 struct ISSN {
     #[serde(rename = "@IssnType")]
     issn_type: String,
-    #[serde(rename = "$val wue")]
+    #[serde(rename = "$value")]
     value: String,
 }
 
@@ -878,6 +879,22 @@ pub struct PubmedArticle {
     medline_citation: MedlineCitation,
     #[serde(rename = "PubmedData")]
     pubmed_data: Option<PubmedData>,
+}
+
+impl PubmedArticle {
+    /// Returns the pmid of this [`PubmedArticle`].
+    ///
+    /// # Errors
+    ///
+    /// This function will return an error if .
+    pub fn pmid(&self) -> Result<u32, ParseIntError> {
+        self.medline_citation.pmid.value.parse::<u32>()
+    }
+    /// Returns the title of this [`PubmedArticle`].
+    pub fn title(&self) -> Option<String> {
+        let t = self.medline_citation.article.article_title.clone();
+        t.map(|v| v.value)
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]

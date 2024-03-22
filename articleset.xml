@@ -1,0 +1,709 @@
+<?xml version="1.0" ?>
+<!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st January 2019//EN" "https://dtd.nlm.nih.gov/ncbi/pubmed/out/pubmed_190101.dtd">
+<PubmedArticleSet>
+<PubmedArticle>
+    <MedlineCitation Status="MEDLINE" IndexingMethod="Curated" Owner="NLM">
+        <PMID Version="1">28895354</PMID>
+        <DateCompleted>
+            <Year>2018</Year>
+            <Month>11</Month>
+            <Day>19</Day>
+        </DateCompleted>
+        <DateRevised>
+            <Year>2018</Year>
+            <Month>11</Month>
+            <Day>19</Day>
+        </DateRevised>
+        <Article PubModel="Print">
+            <Journal>
+                <ISSN IssnType="Print">1000-3061</ISSN>
+                <JournalIssue CitedMedium="Print">
+                    <Volume>33</Volume>
+                    <Issue>6</Issue>
+                    <PubDate>
+                        <Year>2017</Year>
+                        <Month>Jun</Month>
+                        <Day>25</Day>
+                    </PubDate>
+                </JournalIssue>
+                <Title>Sheng wu gong cheng xue bao = Chinese journal of biotechnology</Title>
+                <ISOAbbreviation>Sheng Wu Gong Cheng Xue Bao</ISOAbbreviation>
+            </Journal>
+            <ArticleTitle>[Fermentations of xylose and arabinose by Kluyveromyces marxianus].</ArticleTitle>
+            <Pagination>
+                <MedlinePgn>923-935</MedlinePgn>
+            </Pagination>
+            <ELocationID EIdType="doi" ValidYN="Y">10.13345/j.cjb.160458</ELocationID>
+            <Abstract>
+                <AbstractText>Kluyveromyces marxianus, as unconventional yeast, attracts more and more attention in the biofuel fermentation. Although this sort of yeasts can ferment pentose sugars, the fermentation capacity differs largely. Xylose and arabinose fermentation by three K. marxianus strains (K. m 9009, K. m 1911 and K. m 1727) were compared at different temperatures. The results showed that the fermentation performance of the three strains had significant difference under different fermentation temperatures. Especially, the sugar consumption rate and alcohol yield of K. m 9009 and K. m 1727 at 40 ℃ were better than 30 ℃. This results fully reflect the fermentation advantages of K. marxianus yeast under high-temperature. On this basis, five genes (XR, XDH, XK, AR and LAD) coding key metabolic enzymes in three different yeasts were amplified by PCR, and the sequence were compared by Clustalx 2.1. The results showed that the amino acid sequences coding key enzymes have similarity of over 98% with the reference sequences reported in the literature. Furthermore, the difference of amino acid was not at the key site of its enzyme, so the differences between three stains were not caused by the gene level, but by transcribed or translation regulation level. By real-time PCR experiment, we determined the gene expression levels of four key enzymes (XR, XDH, XK and ADH) in the xylose metabolism pathway of K. m 1727 and K. m 1911 at different fermentation time points. The results showed that, for thermotolerant yeast K. m 1727, the low expression level of XDH and XK genes was the main factors leading to accumulation of xylitol. In addition, according to the pathway of Zygosaccharomyces bailii, which have been reported in NCBI and KEGG, the xylose and arabinose metabolic pathways of K. marxianus were identified, which laid foundation for further improving the pentose fermentation ability by metabolic engineering.</AbstractText>
+            </Abstract>
+            <AuthorList CompleteYN="Y">
+                <Author ValidYN="Y">
+                    <LastName>Hou</LastName>
+                    <ForeName>Shengbo</ForeName>
+                    <Initials>S</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>School of Life Sciences and Biotechnology, Dalian University of Technology, Dalian 116023, Liaoning, China.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Feng</LastName>
+                    <ForeName>Hualiang</ForeName>
+                    <Initials>H</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>School of Life Sciences and Biotechnology, Dalian University of Technology, Dalian 116023, Liaoning, China.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Gao</LastName>
+                    <ForeName>Jiaoqi</ForeName>
+                    <Initials>J</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>School of Life Sciences and Biotechnology, Dalian University of Technology, Dalian 116023, Liaoning, China.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Li</LastName>
+                    <ForeName>Yimin</ForeName>
+                    <Initials>Y</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>School of Life Sciences and Biotechnology, Dalian University of Technology, Dalian 116023, Liaoning, China.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Yuan</LastName>
+                    <ForeName>Wenjie</ForeName>
+                    <Initials>W</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>School of Life Sciences and Biotechnology, Dalian University of Technology, Dalian 116023, Liaoning, China.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Bai</LastName>
+                    <ForeName>Fengwu</ForeName>
+                    <Initials>F</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>State Key Laboratory of Microbial Metabolism, Shanghai Jiaotong University, Shanghai 200240, China.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+            </AuthorList>
+            <Language>chi</Language>
+            <PublicationTypeList>
+                <PublicationType UI="D016428">Journal Article</PublicationType>
+            </PublicationTypeList>
+        </Article>
+        <MedlineJournalInfo>
+            <Country>China</Country>
+            <MedlineTA>Sheng Wu Gong Cheng Xue Bao</MedlineTA>
+            <NlmUniqueID>9426463</NlmUniqueID>
+            <ISSNLinking>1000-3061</ISSNLinking>
+        </MedlineJournalInfo>
+        <ChemicalList>
+            <Chemical>
+                <RegistryNumber>3K9958V90M</RegistryNumber>
+                <NameOfSubstance UI="D000431">Ethanol</NameOfSubstance>
+            </Chemical>
+            <Chemical>
+                <RegistryNumber>A1TA934AKO</RegistryNumber>
+                <NameOfSubstance UI="D014994">Xylose</NameOfSubstance>
+            </Chemical>
+            <Chemical>
+                <RegistryNumber>B40ROO395Z</RegistryNumber>
+                <NameOfSubstance UI="D001089">Arabinose</NameOfSubstance>
+            </Chemical>
+        </ChemicalList>
+        <CitationSubset>IM</CitationSubset>
+        <MeshHeadingList>
+            <MeshHeading>
+                <DescriptorName UI="D001089" MajorTopicYN="N">Arabinose</DescriptorName>
+                <QualifierName UI="Q000096" MajorTopicYN="Y">biosynthesis</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D000431" MajorTopicYN="N">Ethanol</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D005285" MajorTopicYN="Y">Fermentation</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D007218" MajorTopicYN="N">Industrial Microbiology</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D007716" MajorTopicYN="N">Kluyveromyces</DescriptorName>
+                <QualifierName UI="Q000378" MajorTopicYN="Y">metabolism</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D014994" MajorTopicYN="N">Xylose</DescriptorName>
+                <QualifierName UI="Q000096" MajorTopicYN="Y">biosynthesis</QualifierName>
+            </MeshHeading>
+        </MeshHeadingList>
+        <OtherAbstract Type="Publisher" Language="chi">
+            <AbstractText>马克斯克鲁维酵母作为非常规酵母在燃料乙醇发酵中受到人们越来越多的关注。马克斯克鲁维具有天然的发酵戊糖的能力，但不同菌株的发酵能力存在较大差异。本研究比较了3 株马克斯克鲁维菌株Kluyveromyces marxianus 9009/1911/1727 (K. m 9009/1911/1727) 在不同温度下的木糖和阿拉伯糖的发酵性能差异，结果发现不同发酵温度下，3 株菌在耗糖速率、糖醇产率均表现出了显著的差异。菌株K. m 9009 和K. m 1727在40 ℃下的发酵性能均优于30 ℃，这充分体现了马克斯克鲁维酵母的高温发酵优势。针对发酵差异，采用PCR 方法获得3 个不同菌株的戊糖代谢途径中的5 种关键代谢酶 (XR、XDH、XK、AR 和LAD) 的基因序列，并利用Clustalx 2.1 进行了序列比对。结果显示3 株菌的相关基因与文献中报道的1 株克鲁维酵母的相应关键酶氨基酸编码序列相似性达98%以上，并且差异的氨基酸不在酶的关键位点处。在此基础上，通过Real-time实验，对木糖发酵差异最为明显的K. m 1727 和K. m 1911 的木糖代谢过程4 个关键酶 (XR、XDH、XK 和ADH)的基因表达量进行测定，其结果显示对于耐热菌株K. m 1727，XDH 和XK 基因表达量低是导致木糖代谢过程中木糖醇积累、乙醇产量低的主要原因。最后，将所测得的马克斯克鲁维酵母的戊糖代谢关键酶序列与其他不同种属相比对，确定了其木糖和阿拉伯糖代谢途径，为进一步利用代谢工程方法提高戊糖发酵性能奠定了基础。.</AbstractText>
+        </OtherAbstract>
+        <KeywordList Owner="NOTNLM">
+            <Keyword MajorTopicYN="N">Kluyveromyces marxianus</Keyword>
+            <Keyword MajorTopicYN="N">arabinose fermentation</Keyword>
+            <Keyword MajorTopicYN="N">metabolic pathway</Keyword>
+            <Keyword MajorTopicYN="N">sequence aligment</Keyword>
+            <Keyword MajorTopicYN="N">xylose fermentation</Keyword>
+        </KeywordList>
+    </MedlineCitation>
+    <PubmedData>
+        <History>
+            <PubMedPubDate PubStatus="entrez">
+                <Year>2017</Year>
+                <Month>9</Month>
+                <Day>13</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="pubmed">
+                <Year>2017</Year>
+                <Month>9</Month>
+                <Day>13</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="medline">
+                <Year>2018</Year>
+                <Month>11</Month>
+                <Day>20</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+        </History>
+        <PublicationStatus>ppublish</PublicationStatus>
+        <ArticleIdList>
+            <ArticleId IdType="pubmed">28895354</ArticleId>
+            <ArticleId IdType="doi">10.13345/j.cjb.160458</ArticleId>
+        </ArticleIdList>
+    </PubmedData>
+</PubmedArticle>
+
+
+<PubmedArticle>
+    <MedlineCitation Status="MEDLINE" Owner="NLM">
+        <PMID Version="1">28589863</PMID>
+        <DateCompleted>
+            <Year>2018</Year>
+            <Month>01</Month>
+            <Day>18</Day>
+        </DateCompleted>
+        <DateRevised>
+            <Year>2018</Year>
+            <Month>11</Month>
+            <Day>13</Day>
+        </DateRevised>
+        <Article PubModel="Electronic">
+            <Journal>
+                <ISSN IssnType="Electronic">1471-2164</ISSN>
+                <JournalIssue CitedMedium="Internet">
+                    <Volume>18</Volume>
+                    <Issue>Suppl 4</Issue>
+                    <PubDate>
+                        <Year>2017</Year>
+                        <Month>05</Month>
+                        <Day>24</Day>
+                    </PubDate>
+                </JournalIssue>
+                <Title>BMC genomics</Title>
+                <ISOAbbreviation>BMC Genomics</ISOAbbreviation>
+            </Journal>
+            <ArticleTitle>A simple and economical method for improving whole genome alignment.</ArticleTitle>
+            <Pagination>
+                <MedlinePgn>362</MedlinePgn>
+            </Pagination>
+            <ELocationID EIdType="doi" ValidYN="Y">10.1186/s12864-017-3734-2</ELocationID>
+            <Abstract>
+                <AbstractText Label="BACKGROUND">The recent advancement of whole genome alignment software has made it possible to align two genomes very efficiently and with only a small sacrifice in sensitivity. Yet it becomes very slow if the extra sensitivity is needed. This paper proposes a simple but effective method to improve the sensitivity of existing whole-genome alignment software without paying much extra running time.</AbstractText>
+                <AbstractText Label="RESULTS AND CONCLUSIONS">We have applied our method to a popular whole genome alignment tool LAST, and we called the resulting tool LASTM. Experimental results showed that LASTM could find more high quality alignments with a little extra running time. For example, when comparing human and mouse genomes, to produce the similar number of alignments with similar average length and similarity, LASTM was about three times faster than LAST. We conclude that our method can be used to improve the sensitivity, and the extra time it takes is small, and thus it is worthwhile to be implemented in existing tools.</AbstractText>
+            </Abstract>
+            <AuthorList CompleteYN="Y">
+                <Author ValidYN="Y">
+                    <LastName>Mai</LastName>
+                    <ForeName>Huijun</ForeName>
+                    <Initials>H</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>Computer Science Department, University of Hong Kong, Pokfulam road, Hong Kong, China.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Lam</LastName>
+                    <ForeName>Tak-Wah</ForeName>
+                    <Initials>TW</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>Computer Science Department, University of Hong Kong, Pokfulam road, Hong Kong, China.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Ting</LastName>
+                    <ForeName>Hing-Fung</ForeName>
+                    <Initials>HF</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>Computer Science Department, University of Hong Kong, Pokfulam road, Hong Kong, China. hfting@cs.hku.hk.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+            </AuthorList>
+            <Language>eng</Language>
+            <PublicationTypeList>
+                <PublicationType UI="D016428">Journal Article</PublicationType>
+                <PublicationType UI="D013485">Research Support, Non-U.S. Gov't</PublicationType>
+            </PublicationTypeList>
+            <ArticleDate DateType="Electronic">
+                <Year>2017</Year>
+                <Month>05</Month>
+                <Day>24</Day>
+            </ArticleDate>
+        </Article>
+        <MedlineJournalInfo>
+            <Country>England</Country>
+            <MedlineTA>BMC Genomics</MedlineTA>
+            <NlmUniqueID>100965258</NlmUniqueID>
+            <ISSNLinking>1471-2164</ISSNLinking>
+        </MedlineJournalInfo>
+        <CitationSubset>IM</CitationSubset>
+        <MeshHeadingList>
+            <MeshHeading>
+                <DescriptorName UI="D000818" MajorTopicYN="N">Animals</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D006801" MajorTopicYN="N">Humans</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D016415" MajorTopicYN="N">Sequence Alignment</DescriptorName>
+                <QualifierName UI="Q000379" MajorTopicYN="Y">methods</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D013997" MajorTopicYN="N">Time Factors</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D000073336" MajorTopicYN="N">Whole Genome Sequencing</DescriptorName>
+                <QualifierName UI="Q000379" MajorTopicYN="Y">methods</QualifierName>
+            </MeshHeading>
+        </MeshHeadingList>
+        <KeywordList Owner="NOTNLM">
+            <Keyword MajorTopicYN="Y">Seed-and-extend heuristic</Keyword>
+            <Keyword MajorTopicYN="Y">Sensitivity</Keyword>
+            <Keyword MajorTopicYN="Y">Whole genome aligment</Keyword>
+        </KeywordList>
+    </MedlineCitation>
+    <PubmedData>
+        <History>
+            <PubMedPubDate PubStatus="entrez">
+                <Year>2017</Year>
+                <Month>6</Month>
+                <Day>8</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="pubmed">
+                <Year>2017</Year>
+                <Month>6</Month>
+                <Day>8</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="medline">
+                <Year>2018</Year>
+                <Month>1</Month>
+                <Day>19</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+        </History>
+        <PublicationStatus>epublish</PublicationStatus>
+        <ArticleIdList>
+            <ArticleId IdType="pubmed">28589863</ArticleId>
+            <ArticleId IdType="doi">10.1186/s12864-017-3734-2</ArticleId>
+            <ArticleId IdType="pii">10.1186/s12864-017-3734-2</ArticleId>
+            <ArticleId IdType="pmc">PMC5461527</ArticleId>
+        </ArticleIdList>
+        <ReferenceList>
+            <Reference>
+                <Citation>Genome Res. 2002 Apr;12(4):656-64</Citation>
+                <ArticleIdList>
+                    <ArticleId IdType="pubmed">11932250</ArticleId>
+                </ArticleIdList>
+            </Reference>
+            <Reference>
+                <Citation>Genome Res. 2003 Jan;13(1):103-7</Citation>
+                <ArticleIdList>
+                    <ArticleId IdType="pubmed">12529312</ArticleId>
+                </ArticleIdList>
+            </Reference>
+            <Reference>
+                <Citation>Bioinformatics. 2002 Mar;18(3):440-5</Citation>
+                <ArticleIdList>
+                    <ArticleId IdType="pubmed">11934743</ArticleId>
+                </ArticleIdList>
+            </Reference>
+            <Reference>
+                <Citation>IEEE/ACM Trans Comput Biol Bioinform. 2004 Jul-Sep;1(3):116-29</Citation>
+                <ArticleIdList>
+                    <ArticleId IdType="pubmed">17048387</ArticleId>
+                </ArticleIdList>
+            </Reference>
+            <Reference>
+                <Citation>J Mol Biol. 1990 Oct 5;215(3):403-10</Citation>
+                <ArticleIdList>
+                    <ArticleId IdType="pubmed">2231712</ArticleId>
+                </ArticleIdList>
+            </Reference>
+            <Reference>
+                <Citation>J Bioinform Comput Biol. 2006 Apr;4(2):553-69</Citation>
+                <ArticleIdList>
+                    <ArticleId IdType="pubmed">16819802</ArticleId>
+                </ArticleIdList>
+            </Reference>
+            <Reference>
+                <Citation>Genome Biol. 2004;5(2):R12</Citation>
+                <ArticleIdList>
+                    <ArticleId IdType="pubmed">14759262</ArticleId>
+                </ArticleIdList>
+            </Reference>
+            <Reference>
+                <Citation>Bioinformatics. 2008 Mar 15;24(6):791-7</Citation>
+                <ArticleIdList>
+                    <ArticleId IdType="pubmed">18227115</ArticleId>
+                </ArticleIdList>
+            </Reference>
+            <Reference>
+                <Citation>Nucleic Acids Res. 2014 Apr;42(7):e59</Citation>
+                <ArticleIdList>
+                    <ArticleId IdType="pubmed">24493737</ArticleId>
+                </ArticleIdList>
+            </Reference>
+            <Reference>
+                <Citation>Nucleic Acids Res. 1997 Sep 1;25(17):3389-402</Citation>
+                <ArticleIdList>
+                    <ArticleId IdType="pubmed">9254694</ArticleId>
+                </ArticleIdList>
+            </Reference>
+            <Reference>
+                <Citation>Genome Res. 2011 Mar;21(3):487-93</Citation>
+                <ArticleIdList>
+                    <ArticleId IdType="pubmed">21209072</ArticleId>
+                </ArticleIdList>
+            </Reference>
+        </ReferenceList>
+    </PubmedData>
+</PubmedArticle>
+
+
+<PubmedArticle>
+    <MedlineCitation Status="MEDLINE" Owner="NLM">
+        <PMID Version="1">24319963</PMID>
+        <DateCompleted>
+            <Year>2014</Year>
+            <Month>01</Month>
+            <Day>16</Day>
+        </DateCompleted>
+        <DateRevised>
+            <Year>2013</Year>
+            <Month>12</Month>
+            <Day>10</Day>
+        </DateRevised>
+        <Article PubModel="Print">
+            <Journal>
+                <ISSN IssnType="Print">1003-9279</ISSN>
+                <JournalIssue CitedMedium="Print">
+                    <Volume>27</Volume>
+                    <Issue>3</Issue>
+                    <PubDate>
+                        <Year>2013</Year>
+                        <Month>Jun</Month>
+                    </PubDate>
+                </JournalIssue>
+                <Title>Zhonghua shi yan he lin chuang bing du xue za zhi = Zhonghua shiyan he linchuang bingduxue zazhi = Chinese journal of experimental and clinical virology</Title>
+                <ISOAbbreviation>Zhonghua Shi Yan He Lin Chuang Bing Du Xue Za Zhi</ISOAbbreviation>
+            </Journal>
+            <ArticleTitle>[A novel SELEX method for screening of HIV-1 P24 antigen].</ArticleTitle>
+            <Pagination>
+                <MedlinePgn>218-20</MedlinePgn>
+            </Pagination>
+            <Abstract>
+                <AbstractText Label="OBJECTIVE" NlmCategory="OBJECTIVE">To screen aptamers that can bind P24 antigen tightly and specificly, and verify its specificity and affinity.</AbstractText>
+                <AbstractText Label="METHODS" NlmCategory="METHODS">Polycarbonate PCR plate was coated with P24 antigen and SELEX technology was used to screen aptamer on the PCR plate. The primary and secondary structure of these aptamers was analyzed by software. Through HRP labeled streptavidin and biotin labeled aptamers, the affinity and specificity of obtained aptamers were verified by ELISA.</AbstractText>
+                <AbstractText Label="RESULTS" NlmCategory="RESULTS">The polycarbonate PCR plate could be coated with P24 antigen. Electrophoretic analysis showed the aptamers had been enriched. Sequence aligment analysis showed that these aptamers have consensus sequence and their apatial structure was multiple; ELISA verified that aptamers had high affinity with P24 antigen.</AbstractText>
+                <AbstractText Label="CONCLUSION" NlmCategory="CONCLUSIONS">A simple method was established for screening aptamers that can bind HIV-1 P24 antigen specificly and tightly.</AbstractText>
+            </Abstract>
+            <AuthorList CompleteYN="Y">
+                <Author ValidYN="Y">
+                    <LastName>Zhan</LastName>
+                    <ForeName>Shao-Bing</ForeName>
+                    <Initials>SB</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>National Institute for Viral Disease Control and Prevention, Chinese Center for Disease Control and Prevention, Beijing 10052, China.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Zhang</LastName>
+                    <ForeName>Xiao-Guang</ForeName>
+                    <Initials>XG</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Li</LastName>
+                    <ForeName>Hong-Xia</ForeName>
+                    <Initials>HX</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Zeng</LastName>
+                    <ForeName>Yi</ForeName>
+                    <Initials>Y</Initials>
+                </Author>
+            </AuthorList>
+            <Language>chi</Language>
+            <PublicationTypeList>
+                <PublicationType UI="D004740">English Abstract</PublicationType>
+                <PublicationType UI="D016428">Journal Article</PublicationType>
+            </PublicationTypeList>
+        </Article>
+        <MedlineJournalInfo>
+            <Country>China</Country>
+            <MedlineTA>Zhonghua Shi Yan He Lin Chuang Bing Du Xue Za Zhi</MedlineTA>
+            <NlmUniqueID>9602873</NlmUniqueID>
+            <ISSNLinking>1003-9279</ISSNLinking>
+        </MedlineJournalInfo>
+        <ChemicalList>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance UI="D016655">HIV Core Protein p24</NameOfSubstance>
+            </Chemical>
+        </ChemicalList>
+        <CitationSubset>IM</CitationSubset>
+        <MeshHeadingList>
+            <MeshHeading>
+                <DescriptorName UI="D016655" MajorTopicYN="N">HIV Core Protein p24</DescriptorName>
+                <QualifierName UI="Q000032" MajorTopicYN="Y">analysis</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D015497" MajorTopicYN="N">HIV-1</DescriptorName>
+                <QualifierName UI="Q000276" MajorTopicYN="Y">immunology</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D006801" MajorTopicYN="N">Humans</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D016133" MajorTopicYN="N">Polymerase Chain Reaction</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D052156" MajorTopicYN="N">SELEX Aptamer Technique</DescriptorName>
+                <QualifierName UI="Q000379" MajorTopicYN="Y">methods</QualifierName>
+            </MeshHeading>
+        </MeshHeadingList>
+    </MedlineCitation>
+    <PubmedData>
+        <History>
+            <PubMedPubDate PubStatus="entrez">
+                <Year>2013</Year>
+                <Month>12</Month>
+                <Day>11</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="pubmed">
+                <Year>2013</Year>
+                <Month>12</Month>
+                <Day>11</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="medline">
+                <Year>2014</Year>
+                <Month>1</Month>
+                <Day>17</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+        </History>
+        <PublicationStatus>ppublish</PublicationStatus>
+        <ArticleIdList>
+            <ArticleId IdType="pubmed">24319963</ArticleId>
+        </ArticleIdList>
+    </PubmedData>
+</PubmedArticle>
+
+
+<PubmedArticle>
+    <MedlineCitation Status="MEDLINE" Owner="NLM">
+        <PMID Version="1">9570739</PMID>
+        <DateCompleted>
+            <Year>1998</Year>
+            <Month>06</Month>
+            <Day>15</Day>
+        </DateCompleted>
+        <DateRevised>
+            <Year>2006</Year>
+            <Month>11</Month>
+            <Day>15</Day>
+        </DateRevised>
+        <Article PubModel="Print">
+            <Journal>
+                <ISSN IssnType="Print">0196-3635</ISSN>
+                <JournalIssue CitedMedium="Print">
+                    <Volume>19</Volume>
+                    <Issue>2</Issue>
+                    <PubDate>
+                        <MedlineDate>1998 Mar-Apr</MedlineDate>
+                    </PubDate>
+                </JournalIssue>
+                <Title>Journal of andrology</Title>
+                <ISOAbbreviation>J. Androl.</ISOAbbreviation>
+            </Journal>
+            <ArticleTitle>Mouse testicular sulfated glycoprotein-1: sequence analysis of the common backbone structure of prosaposins.</ArticleTitle>
+            <Pagination>
+                <MedlinePgn>165-74</MedlinePgn>
+            </Pagination>
+            <Abstract>
+                <AbstractText>We have generated a cDNA encoding the mouse sulfated glycoprotein-1 (SGP-1) by polymerase chain reaction amplification of a mouse testicular Uni-Zap XR cDNA library with two synthetic oligonucleotide primers. A positive signal of 1,959 bases was isolated and subcloned into the pGEM-T. Sequence analysis showed a near identical nucleotide and amino acid similarity to mouse prosaposin cDNA. A few amino acid differences were found, and they may represent strain-specific heterogeneities. The cDNA has 88% amino acid identity to rat SGP-1 and 64% identity to human prosaposin. Prosaposin is the precursor of four lysosomal saposins (A, B, C, and D) that are generated by the proteolytic maturation of the former. Saposins are sphingolipid binding proteins that function as activators of lysosomal enzymes involved in sphingolipid hydrolysis. Northern blot analysis demonstrated that SGP-1 mRNA is transcribed in the seminiferous epithelium by Sertoli cells but not by germinal cells. Our results also demonstrated two forms of alternatively spliced testicular SGP-1 mRNA. This alternative splicing results in the inclusion or exclusion of exon 8, which encodes for three amino acid residues (QDQ) that are implicated in the sphingolipid binding affinity of saposin B. Sequence aligment indicates that all saposins share a common motif characterized by six conserved cysteines, a conserved N-linked glycosylation site, a conserved proline residue, and 15 positions that are characterized by large hydrophobic amino acids. These characteristics, together with similar secondary structure predictions and the predicted similar formation of three disulfide linkages, create a common framework of amino acids of three alpha helices enclosing an internal hydrophobic core for all saposins. The disulfide placement data, the hydropathy profile, and the presence of amphiphatic helices indicate that all saposins are stable proteins sharing similar secondary and tertiary structures.</AbstractText>
+            </Abstract>
+            <AuthorList CompleteYN="Y">
+                <Author ValidYN="Y">
+                    <LastName>Zhao</LastName>
+                    <ForeName>Q</ForeName>
+                    <Initials>Q</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>Department of Anatomy and Cell Biology, McGill University, Montreal, Quebec, Canada.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Bell</LastName>
+                    <ForeName>A W</ForeName>
+                    <Initials>AW</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>El-Alfy</LastName>
+                    <ForeName>M</ForeName>
+                    <Initials>M</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Morales</LastName>
+                    <ForeName>C R</ForeName>
+                    <Initials>CR</Initials>
+                </Author>
+            </AuthorList>
+            <Language>eng</Language>
+            <PublicationTypeList>
+                <PublicationType UI="D016428">Journal Article</PublicationType>
+                <PublicationType UI="D013485">Research Support, Non-U.S. Gov't</PublicationType>
+            </PublicationTypeList>
+        </Article>
+        <MedlineJournalInfo>
+            <Country>United States</Country>
+            <MedlineTA>J Androl</MedlineTA>
+            <NlmUniqueID>8106453</NlmUniqueID>
+            <ISSNLinking>0196-3635</ISSNLinking>
+        </MedlineJournalInfo>
+        <ChemicalList>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance UI="D018076">DNA, Complementary</NameOfSubstance>
+            </Chemical>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance UI="D006023">Glycoproteins</NameOfSubstance>
+            </Chemical>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance UI="C483345">PSAP protein, human</NameOfSubstance>
+            </Chemical>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance UI="C483344">Psap protein, mouse</NameOfSubstance>
+            </Chemical>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance UI="C483347">Psap protein, rat</NameOfSubstance>
+            </Chemical>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance UI="D049231">Saposins</NameOfSubstance>
+            </Chemical>
+        </ChemicalList>
+        <CitationSubset>IM</CitationSubset>
+        <MeshHeadingList>
+            <MeshHeading>
+                <DescriptorName UI="D017398" MajorTopicYN="N">Alternative Splicing</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D000595" MajorTopicYN="N">Amino Acid Sequence</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D000818" MajorTopicYN="N">Animals</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D001483" MajorTopicYN="N">Base Sequence</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D018076" MajorTopicYN="N">DNA, Complementary</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D006023" MajorTopicYN="N">Glycoproteins</DescriptorName>
+                <QualifierName UI="Q000737" MajorTopicYN="N">chemistry</QualifierName>
+                <QualifierName UI="Q000235" MajorTopicYN="Y">genetics</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D006801" MajorTopicYN="N">Humans</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D008297" MajorTopicYN="N">Male</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D051379" MajorTopicYN="N">Mice</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D008969" MajorTopicYN="N">Molecular Sequence Data</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D016366" MajorTopicYN="N">Open Reading Frames</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D016133" MajorTopicYN="N">Polymerase Chain Reaction</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D017433" MajorTopicYN="N">Protein Structure, Secondary</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D051381" MajorTopicYN="N">Rats</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D049231" MajorTopicYN="N">Saposins</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D017386" MajorTopicYN="N">Sequence Homology, Amino Acid</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName UI="D013737" MajorTopicYN="N">Testis</DescriptorName>
+                <QualifierName UI="Q000378" MajorTopicYN="Y">metabolism</QualifierName>
+            </MeshHeading>
+        </MeshHeadingList>
+    </MedlineCitation>
+    <PubmedData>
+        <History>
+            <PubMedPubDate PubStatus="pubmed">
+                <Year>1998</Year>
+                <Month>5</Month>
+                <Day>7</Day>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="medline">
+                <Year>1998</Year>
+                <Month>5</Month>
+                <Day>7</Day>
+                <Hour>0</Hour>
+                <Minute>1</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="entrez">
+                <Year>1998</Year>
+                <Month>5</Month>
+                <Day>7</Day>
+                <Hour>0</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+        </History>
+        <PublicationStatus>ppublish</PublicationStatus>
+        <ArticleIdList>
+            <ArticleId IdType="pubmed">9570739</ArticleId>
+        </ArticleIdList>
+    </PubmedData>
+</PubmedArticle>
+
+</PubmedArticleSet>
