@@ -15,7 +15,7 @@ use std::fs::FileType;
 // use std::io::{self, prelude::*};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct PMID {
+pub struct PMID {
     #[serde(rename = "@Version")]
     version: String,
     #[serde(rename = "$value")]
@@ -23,19 +23,19 @@ struct PMID {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Title {
+pub struct Title {
     #[serde(rename = "$value")]
     value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Abbreviation {
+pub struct Abbreviation {
     #[serde(rename = "$value")]
     value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Journal {
+pub struct Journal {
     #[serde(rename = "ISSN")]
     issn: Option<ISSN>,
     #[serde(rename = "JournalIssue")]
@@ -46,17 +46,17 @@ struct Journal {
     abbreviation: Option<Abbreviation>,
 }
 
-// impl Journal {
-//     fn year(&self) -> Result<u32, std::num::ParseIntError> {
-//         match self.journal_issue.year() {
-//             Some(v) => str::parse::<u32>(&v),
-//             _ => str::parse::<u32>(""),
-//         }
-//     }
-// }
+impl Journal {
+    fn year(&self) -> Result<u32, std::num::ParseIntError> {
+        match self.journal_issue.year() {
+            Some(v) => str::parse::<u32>(&v),
+            _ => str::parse::<u32>(""),
+        }
+    }
+}
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct ISSN {
+pub struct ISSN {
     #[serde(rename = "@IssnType")]
     issn_type: String,
     #[serde(rename = "$value")]
@@ -64,7 +64,7 @@ struct ISSN {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct JournalIssue {
+pub struct JournalIssue {
     #[serde(rename = "@CitedMedium")]
     cited_medium: String,
     #[serde(rename = "Volume")]
@@ -75,70 +75,70 @@ struct JournalIssue {
     pubdate: PubDate,
 }
 
-// impl JournalIssue {
-//     fn year(&self) -> Option<String> {
-//         self.pubdate.year()
-//     }
-// }
+impl JournalIssue {
+    fn year(&self) -> Option<String> {
+        self.pubdate.year()
+    }
+}
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Volume {
+pub struct Volume {
     #[serde(rename = "$value")]
     value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Issue {
+pub struct Issue {
     #[serde(rename = "$value")]
     value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct PubDate {
+pub struct PubDate {
     #[serde(rename = "Year")]
     year_op: Option<String>,
     #[serde(rename = "MedlineDate")]
     medline_date_op: Option<MedlineDate>,
 }
 
-// impl PubDate {
-//     fn year(&self) -> Option<String> {
-//         if self.year_op.is_some() {
-//             self.year_op.clone()
-//         } else if self.medline_date_op.is_some() {
-//             let op = self.medline_date_op.clone();
-//             op.map(|v| v.year())
-//         } else {
-//             self.year_op.clone()
-//         }
-//     }
-// }
+impl PubDate {
+    fn year(&self) -> Option<String> {
+        if self.year_op.is_some() {
+            self.year_op.clone()
+        } else if self.medline_date_op.is_some() {
+            let op = self.medline_date_op.clone();
+            op.map(|v| v.year())
+        } else {
+            self.year_op.clone()
+        }
+    }
+}
 
 // <MedlineDate>1998 Mar-Apr</MedlineDate>
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct MedlineDate {
+pub struct MedlineDate {
     #[serde(rename = "$value")]
     value: String,
 }
 
-// impl MedlineDate {
-//     fn year(&self) -> String {
-//         let it = self.value.chars();
-//         String::from_iter(
-//             it.skip_while(|c| !c.is_ascii_digit())
-//                 .take_while(|c| c.is_ascii_digit()),
-//         )
-//     }
-// }
+impl MedlineDate {
+    fn year(&self) -> String {
+        let it = self.value.chars();
+        String::from_iter(
+            it.skip_while(|c| !c.is_ascii_digit())
+                .take_while(|c| c.is_ascii_digit()),
+        )
+    }
+}
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct AtticleTitle {
+pub struct AtticleTitle {
     #[serde(rename = "$value")]
     value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct AbstractText {
+pub struct AbstractText {
     #[serde(rename = "@Label")]
     label: Option<String>,
     #[serde(rename = "@NlmCategory")]
@@ -146,13 +146,19 @@ struct AbstractText {
     #[serde(rename = "$value")]
     value: String,
 }
+
+impl AbstractText {
+    pub fn text(&self) -> String {
+        self.value.clone()
+    }
+}
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct CopyrightInformation {
+pub struct CopyrightInformation {
     #[serde(rename = "$value")]
     value: String,
 }
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Abstract {
+pub struct Abstract {
     //TODO: AbstractText missing
     #[serde(rename = "AbstractText")]
     abstract_text: Option<Vec<AbstractText>>,
@@ -161,28 +167,28 @@ struct Abstract {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct MedlinePgn {
+pub struct MedlinePgn {
     #[serde(rename = "$value")]
     value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Pagination {
+pub struct Pagination {
     #[serde(rename = "MedlinePgn")]
     medline_pgn: Option<MedlinePgn>,
 }
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct LastName {
+pub struct LastName {
     #[serde(rename = "$value")]
     value: String,
 }
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct ForeName {
+pub struct ForeName {
     #[serde(rename = "$value")]
     value: String,
 }
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Initials {
+pub struct Initials {
     // #[serde(rename = "$value")]
     #[serde(alias = "value")]
     #[serde(rename(serialize = "value", deserialize = "$value"))]
@@ -190,13 +196,13 @@ struct Initials {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct CollectiveName {
+pub struct CollectiveName {
     #[serde(rename = "$value")]
     value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Author {
+pub struct Author {
     #[serde(rename = "@ValidYN")]
     valid_yn: Option<String>,
     #[serde(rename = "@Type")]
@@ -232,13 +238,13 @@ impl Author {
 //AffiliationInfo that contain single empty Affiliation will be
 //deserialized as Option<Vec<Affiliation>>
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct AffiliationInfo {
+pub struct AffiliationInfo {
     #[serde(rename = "Affiliation")]
     affiliation: Option<Vec<Affiliation>>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Affiliation {
+pub struct Affiliation {
     #[serde(rename = "$value")]
     value: String,
 }
@@ -250,7 +256,7 @@ impl Author {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct AuthorList {
+pub struct AuthorList {
     #[serde(rename = "@CompleteYN")]
     complete_flag: String,
     #[serde(rename = "Author")]
@@ -265,13 +271,13 @@ impl AuthorList {
 
 // <Language>eng</Language>
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Language {
+pub struct Language {
     #[serde(rename = "$value")]
     value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct PublicationType {
+pub struct PublicationType {
     #[serde(rename = "@UI")]
     ui: String,
     #[serde(rename = "$value")]
@@ -279,14 +285,14 @@ struct PublicationType {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct PublicationTypeList {
+pub struct PublicationTypeList {
     #[serde(rename = "PublicationType")]
     publication_type: Vec<PublicationType>,
 }
 
 // <ELocationID EIdType="doi" ValidYN="Y">10.1093/ndt/gfw079</ELocationID>
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct ELocationID {
+pub struct ELocationID {
     #[serde(rename = "@EIdType")]
     eid_type: String,
     #[serde(rename = "@ValidYN")]
@@ -296,23 +302,23 @@ struct ELocationID {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct GrantID {
+pub struct GrantID {
     #[serde(rename = "$value")]
     value: Option<String>,
 }
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Acronym {
+pub struct Acronym {
     #[serde(rename = "$value")]
     value: String,
 }
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Agency {
+pub struct Agency {
     #[serde(rename = "$value")]
     value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Grant {
+pub struct Grant {
     #[serde(rename = "GrantID")]
     grant_id: Option<GrantID>,
     #[serde(rename = "Acronym")]
@@ -326,7 +332,7 @@ struct Grant {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct GrantList {
+pub struct GrantList {
     #[serde(rename = "@CompleteYN")]
     complete_yn: Option<String>,
     #[serde(rename = "Grant")]
@@ -334,13 +340,13 @@ struct GrantList {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct VernacularTitle {
+pub struct VernacularTitle {
     #[serde(rename = "$value")]
     value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct ArticleDate {
+pub struct ArticleDate {
     #[serde(rename = "Year")]
     year: String,
     #[serde(rename = "Month")]
@@ -350,7 +356,7 @@ struct ArticleDate {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Article {
+pub struct Article {
     #[serde(rename = "@PubModel")]
     pub_model: String,
     #[serde(rename = "Journal")]
@@ -380,9 +386,9 @@ struct Article {
 }
 
 impl Article {
-    // fn year(&self) -> Result<u32, std::num::ParseIntError> {
-    //     self.journal.year()
-    // }
+    fn year(&self) -> Result<u32, std::num::ParseIntError> {
+        self.journal.year()
+    }
 
     // fn authors(&self) -> Vec<Author> {
     //     match &self.author_list {
@@ -393,28 +399,28 @@ impl Article {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Country {
+pub struct Country {
     #[serde(rename = "$value")]
     value: String,
 }
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct MedlineTA {
+pub struct MedlineTA {
     #[serde(rename = "$value")]
     value: String,
 }
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct NlmUniqueID {
+pub struct NlmUniqueID {
     #[serde(rename = "$value")]
     value: String,
 }
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct ISSNLinking {
+pub struct ISSNLinking {
     #[serde(rename = "$value")]
     value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct MedlineJournalInfo {
+pub struct MedlineJournalInfo {
     #[serde(rename = "Country")]
     country: Option<Country>,
     #[serde(rename = "MedlineTA")]
@@ -426,7 +432,7 @@ struct MedlineJournalInfo {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct DescriptorName {
+pub struct DescriptorName {
     #[serde(rename = "@UI")]
     ui: String,
     #[serde(rename = "@MajorTopicYN")]
@@ -439,7 +445,7 @@ struct DescriptorName {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct QualifierName {
+pub struct QualifierName {
     #[serde(rename = "@UI")]
     ui: String,
     #[serde(rename = "@MajorTopicYN")]
@@ -449,7 +455,7 @@ struct QualifierName {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct MeshHeading {
+pub struct MeshHeading {
     #[serde(rename = "DescriptorName")]
     descriptor_name: DescriptorName,
     #[serde(rename = "QualifierName")]
@@ -457,19 +463,19 @@ struct MeshHeading {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct MeshHeadingList {
+pub struct MeshHeadingList {
     #[serde(rename = "MeshHeading")]
     mesh_heading: Vec<MeshHeading>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct RegistryNumber {
+pub struct RegistryNumber {
     #[serde(rename = "$value")]
     value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct NameOfSubstance {
+pub struct NameOfSubstance {
     #[serde(rename = "@UI")]
     ui: String,
     #[serde(rename = "$value")]
@@ -477,21 +483,39 @@ struct NameOfSubstance {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Chemical {
+pub struct Chemical {
     #[serde(rename = "RegistryNumber")]
     registry_number: RegistryNumber,
     #[serde(rename = "NameOfSubstance")]
     name_of_substance: NameOfSubstance,
 }
 
+impl Chemical {
+    pub fn get_registry_number(&self) -> String {
+        self.registry_number.value.clone()
+    }
+
+    pub fn get_name_of_substance(&self) -> String {
+        self.name_of_substance.value.clone()
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct ChemicalList {
+pub struct ArticleChemical {
+   pub pmid: u32,
+   pub registry_number: String,
+   pub name_of_substance: String,
+   pub year: u32,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct ChemicalList {
     #[serde(rename = "Chemical")]
     chemical: Vec<Chemical>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Keyword {
+pub struct Keyword {
     #[serde(rename = "@MajorTopicYN")]
     major_topic_yn: Option<String>,
     #[serde(rename = "$value")]
@@ -499,7 +523,7 @@ struct Keyword {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct KeywordList {
+pub struct KeywordList {
     #[serde(rename = "@Owner")]
     owner: Option<String>,
     #[serde(rename = "Keyword")]
@@ -507,25 +531,25 @@ struct KeywordList {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct DataBankName {
+pub struct DataBankName {
     #[serde(rename = "$value")]
     value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct AccessionNumber {
+pub struct AccessionNumber {
     #[serde(rename = "$value")]
     value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct AccessionNumberList {
+pub struct AccessionNumberList {
     #[serde(rename = "AccessionNumber")]
     accession_number: Option<Vec<AccessionNumber>>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct DataBank {
+pub struct DataBank {
     #[serde(rename = "DataBankName")]
     data_bank_name: Option<DataBankName>,
     #[serde(rename = "AccessionNumberList")]
@@ -533,7 +557,7 @@ struct DataBank {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct DataBankList {
+pub struct DataBankList {
     #[serde(rename = "@CompleteYN")]
     complete_flag: String,
     #[serde(rename = "DataBank")]
@@ -541,23 +565,23 @@ struct DataBankList {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Year {
+pub struct Year {
     #[serde(rename = "$value")]
     value: String,
 }
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Month {
+pub struct Month {
     #[serde(rename = "$value")]
     value: String,
 }
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Day {
+pub struct Day {
     #[serde(rename = "$value")]
     value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct DateCompleted {
+pub struct DateCompleted {
     #[serde(rename = "Year")]
     year: Year,
     #[serde(rename = "Month")]
@@ -566,7 +590,7 @@ struct DateCompleted {
     day: Day,
 }
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct DateRevised {
+pub struct DateRevised {
     #[serde(rename = "Year")]
     year: Year,
     #[serde(rename = "Month")]
@@ -576,7 +600,7 @@ struct DateRevised {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct SupplMeshName {
+pub struct SupplMeshName {
     #[serde(rename = "Type")]
     supp_mesh_name_type: Option<String>,
     #[serde(rename = "@UI")]
@@ -584,31 +608,31 @@ struct SupplMeshName {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct SupplMeshList {
+pub struct SupplMeshList {
     #[serde(rename = "SupplMeshName")]
     suppl_mesh_name: Vec<SupplMeshName>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct CitationSubset {
+pub struct CitationSubset {
     #[serde(rename = "$value")]
     value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct RefSource {
+pub struct RefSource {
     #[serde(rename = "$value")]
     value: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Note {
+pub struct Note {
     #[serde(rename = "$value")]
     note: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct CommentsCorrections {
+pub struct CommentsCorrections {
     #[serde(rename = "@RefType")]
     ref_type: String,
 
@@ -621,25 +645,25 @@ struct CommentsCorrections {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct CommentsCorrectionsList {
+pub struct CommentsCorrectionsList {
     #[serde(rename = "CommentsCorrections")]
     comments_corrections: Vec<CommentsCorrections>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct GeneSymbol {
+pub struct GeneSymbol {
     #[serde(rename = "$value")]
     value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct GeneSymbolList {
+pub struct GeneSymbolList {
     #[serde(rename = "GeneSymbol")]
     gene_symbol: Vec<GeneSymbol>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct PersonalNameSubject {
+pub struct PersonalNameSubject {
     #[serde(rename = "LastName")]
     last_name: LastName,
     #[serde(rename = "ForeName")]
@@ -651,13 +675,13 @@ struct PersonalNameSubject {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct PersonalNameSubjectList {
+pub struct PersonalNameSubjectList {
     #[serde(rename = "PersonalNameSubject")]
     personal_name_subject: Vec<PersonalNameSubject>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct OtherID {
+pub struct OtherID {
     #[serde(rename = "@Source")]
     source: String,
     #[serde(rename = "$value")]
@@ -665,7 +689,7 @@ struct OtherID {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct OtherAbstract {
+pub struct OtherAbstract {
     #[serde(rename = "@Type")]
     other_abstract_type: String,
     #[serde(rename = "@Language")]
@@ -678,7 +702,7 @@ struct OtherAbstract {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct MedlineCitation {
+pub struct MedlineCitation {
     #[serde(rename = "@Status")]
     status: String,
 
@@ -745,7 +769,7 @@ struct MedlineCitation {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct ArticleId {
+pub struct ArticleId {
     #[serde(rename = "@IdType")]
     id_type: String,
     #[serde(rename = "$value")]
@@ -753,13 +777,13 @@ struct ArticleId {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct ArticleIdList {
+pub struct ArticleIdList {
     #[serde(rename = "ArticleId")]
     article_ids: Option<Vec<ArticleId>>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Reference {
+pub struct Reference {
     #[serde(rename = "Citation")]
     citation: Option<String>,
     #[serde(rename = "ArticleIdList")]
@@ -767,7 +791,7 @@ struct Reference {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct ReferenceList {
+pub struct ReferenceList {
     #[serde(rename = "@Title")]
     title: Option<String>,
     #[serde(rename = "Reference")]
@@ -794,29 +818,29 @@ impl ReferenceList {
 
 // <PublicationStatus>ppublish</PublicationStatus>
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct PublicationStatus {
+pub struct PublicationStatus {
     #[serde(rename = "$value")]
     value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Hour {
+pub struct Hour {
     #[serde(rename = "$value")]
     value: String,
 }
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Minute {
+pub struct Minute {
     #[serde(rename = "$value")]
     value: String,
 }
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Second {
+pub struct Second {
     #[serde(rename = "$value")]
     value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct PubMedPubDate {
+pub struct PubMedPubDate {
     #[serde(rename = "@PubStatus")]
     pub_status: String,
     #[serde(rename = "Year")]
@@ -834,33 +858,33 @@ struct PubMedPubDate {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct History {
+pub struct History {
     #[serde(rename = "PubMedPubDate")]
     pubmed_pub_date: Vec<PubMedPubDate>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Param {
+pub struct Param {
     #[serde(rename = "@Name")]
     name: String,
     #[serde(rename = "$value")]
     value: String,
 }
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Object {
+pub struct Object {
     #[serde(rename = "Type")]
     object_type: String,
     #[serde(rename = "Param")]
     param: Option<Vec<Param>>,
 }
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct ObjectList {
+pub struct ObjectList {
     #[serde(rename = "Object")]
     object: Vec<Object>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct PubmedData {
+pub struct PubmedData {
     #[serde(rename = "History")]
     history: Option<History>,
     #[serde(rename = "ReferenceList")]
@@ -895,41 +919,80 @@ impl PubmedArticle {
         let t = self.medline_citation.article.article_title.clone();
         t.map(|v| v.value)
     }
+
+    pub fn abstact_parts(&self) -> Vec<AbstractText> {
+        let summary = self.medline_citation.article.summary.clone();
+        let vopt = summary.map(|sum| {
+            let text = sum.abstract_text;
+            match text {
+                Some(v) => v,
+                _ => Vec::new(),
+            }
+        });
+        match vopt {
+            Some(v) => v,
+            _ => Vec::new(),
+        }
+    }
+
+    pub fn year(&self) -> u32 {
+        self.medline_citation.article.year().unwrap()
+    }
+
+    pub fn chemicals(&self) -> Vec<ArticleChemical> {
+        match self.medline_citation.chemical_list.clone() {
+            Some(chemical_list) => {
+                let mut result: Vec<ArticleChemical> = Vec::new();
+                for c in chemical_list.chemical {
+                    let pmid = self.pmid().unwrap();
+                    let article_chemical = ArticleChemical {
+                        pmid: pmid,
+                        registry_number: c.registry_number.value,
+                        name_of_substance: c.name_of_substance.value,
+                        year: self.year() 
+                    };
+                    result.push(article_chemical);
+                }
+                result
+            },
+            _  => Vec::new(),
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct PublisherName {
+pub struct PublisherName {
     #[serde(rename = "$value")]
     value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct PublisherLocation {
+pub struct PublisherLocation {
     #[serde(rename = "$value")]
     value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Publisher {
+pub struct Publisher {
     #[serde(rename = "PublisherName")]
     publisher_name: PublisherName,
     publisher_location: Option<PublisherLocation>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct BookTitle {
+pub struct BookTitle {
     #[serde(rename = "$value")]
     value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Season {
+pub struct Season {
     #[serde(rename = "$value")]
     value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct EndingDate {
+pub struct EndingDate {
     #[serde(rename = "Year")]
     year: Year,
     #[serde(rename = "Month")]
@@ -941,7 +1004,7 @@ struct EndingDate {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct BeginningDate {
+pub struct BeginningDate {
     #[serde(rename = "Year")]
     year: Year,
     #[serde(rename = "Month")]
@@ -953,13 +1016,13 @@ struct BeginningDate {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Suffix {
+pub struct Suffix {
     #[serde(rename = "$value")]
     value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Identifier {
+pub struct Identifier {
     #[serde(rename = "Source")]
     source: String,
     #[serde(rename = "$value")]
@@ -967,7 +1030,7 @@ struct Identifier {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Investigator {
+pub struct Investigator {
     #[serde(rename = "LastName")]
     lastname: LastName,
     #[serde(rename = "ForeName")]
@@ -983,49 +1046,49 @@ struct Investigator {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct InvestigatorList {
+pub struct InvestigatorList {
     #[serde(rename = "Investigator")]
     publisher: Investigator,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct VolumeTitle {
+pub struct VolumeTitle {
     #[serde(rename = "$value")]
     value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct CollectionTitle {
+pub struct CollectionTitle {
     #[serde(rename = "$value")]
     value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Edition {
+pub struct Edition {
     #[serde(rename = "$value")]
     value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Medium {
+pub struct Medium {
     #[serde(rename = "$value")]
     value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Isbn {
+pub struct Isbn {
     #[serde(rename = "$value")]
     value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct ReportNumber {
+pub struct ReportNumber {
     #[serde(rename = "$value")]
     value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Book {
+pub struct Book {
     //#[serde(rename="")]
     #[serde(rename = "Publisher")]
     publisher: Publisher,
@@ -1060,7 +1123,7 @@ struct Book {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct LocationLabel {
+pub struct LocationLabel {
     #[serde(rename = "@Type")]
     location_label_type: Option<String>,
     #[serde(rename = "$value")]
@@ -1068,44 +1131,44 @@ struct LocationLabel {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct ArticleTitle {
+pub struct ArticleTitle {
     #[serde(rename = "$value")]
     value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct SectionTitle {
+pub struct SectionTitle {
     #[serde(rename = "$value")]
     value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Section {
+pub struct Section {
     location_label: Option<LocationLabel>,
     section_title: SectionTitle,
     section: Option<Vec<Section>>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Item {
+pub struct Item {
     #[serde(rename = "$value")]
     value: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct ItemList {
+pub struct ItemList {
     #[serde(rename = "Item")]
     item: Vec<Item>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Sections {
+pub struct Sections {
     #[serde(rename = "Section")]
     section: Vec<Section>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct ContributionDate {
+pub struct ContributionDate {
     #[serde(rename = "Year")]
     year: Year,
 
@@ -1119,7 +1182,7 @@ struct ContributionDate {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct BookDocument {
+pub struct BookDocument {
     #[serde(rename = "PMID")]
     pmid: PMID,
     #[serde(rename = "ArticleIdList")]
@@ -1161,7 +1224,7 @@ struct BookDocument {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct PubmedBookData {
+pub struct PubmedBookData {
     #[serde(rename = "History")]
     history: Option<History>,
 
@@ -1176,7 +1239,7 @@ struct PubmedBookData {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct PubmedBookArticle {
+pub struct PubmedBookArticle {
     #[serde(rename = "BookDocument")]
     book_document: BookDocument,
     #[serde(rename = "PubmedBookData")]
@@ -1184,13 +1247,13 @@ struct PubmedBookArticle {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct DeleteCitation {
+pub struct DeleteCitation {
     #[serde(rename = "PMID")]
     pmid: Vec<PMID>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct DeleteDocument {
+pub struct DeleteDocument {
     #[serde(rename = "PMID")]
     pmid: Option<Vec<PMID>>,
 }

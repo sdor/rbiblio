@@ -7,6 +7,14 @@
         {
             "type": "lldb",
             "request": "launch",
+            "name": "UploadChemicals",
+            "program": "${workspaceFolder}/target/debug/upload_chemicals",
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
             "name": "Debug unit tests in library 'pubmed'",
             "cargo": {
                 "args": [

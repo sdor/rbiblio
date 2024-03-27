@@ -1,17 +1,20 @@
 [package]
-name = "pubmed"
+name = "pubmed-db"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-
-# dotenv = "0.15.0"
-# directories = "5.0.1"
+dotenv = {workspace = true}
+diesel = {workspace=true, features = ["postgres","serde_json","chrono","r2d2", "uuid"]}
+# r2d2 = {workspace = true}
+pubmed = {path = "../pubmed"}
 serde = {workspace = true, features = ["derive"]}
 serde_json = {workspace = true }
-quick-xml = {version= "0.31.0", features = ["serialize","async-tokio"]}
 futures = {workspace = true}
 tokio = { workspace = true, features = ["full"] }
-async-compression = {version = "0.4.6", features = ["gzip","tokio"]}
+
+[[bin]]
+name = "upload_chemicals"
+

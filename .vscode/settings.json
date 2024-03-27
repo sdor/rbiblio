@@ -1,5 +1,11 @@
 {
     "cSpell.words": [
         "flate"
+    ],
+    "rust-analyzer.linkedProjects": [
+        "./pubmed-utils/Cargo.toml",
+        "./pubmed-utils/Cargo.toml",
+        "./pubmed-utils/Cargo.toml",
+        "./pubmed-utils/Cargo.toml"
     ]
 }
